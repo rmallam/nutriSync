@@ -6,7 +6,8 @@ const config: CapacitorConfig = {
   webDir: 'public',
   server: {
     url: 'https://nutri-sync-rho.vercel.app',
-    cleartext: true
+    cleartext: true,
+    allowNavigation: ['nutri-sync-rho.vercel.app']
   }
 };
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter } from 'next/font/google';
+import BiometricWall from '@/components/BiometricWall';
 import "./globals.css";
 
 const inter = Inter({
@@ -42,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${outfit.variable}`}>
-        {children}
+        <BiometricWall>{children}</BiometricWall>
       </body>
     </html>
   );
