@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'NutriSync',
   webDir: 'public',
   server: {
-    url: 'https://nutri-sync-pqjtrdq5x-mallamrakeshkumar-5275s-projects.vercel.app',
+    url: 'https://nutri-sync-rho.vercel.app',
     cleartext: true
   }
 };
