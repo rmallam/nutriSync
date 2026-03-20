@@ -103,7 +103,7 @@ export default function Auth({ onSuccess }: AuthProps) {
         <div style={{ marginTop: 'var(--space-6)', textAlign: 'center' }}>
           <button 
             onClick={() => { setIsSignUp(!isSignUp); setError(null); }}
-            style={{ background: 'none', border: 'none', color: 'var(--accent-secondary)', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}
+            style={{ background: 'none', border: 'none', color: '#007AFF', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}
           >
             {isSignUp ? "Already have an account? Log In" : "Don't have an account? Sign Up"}
           </button>
