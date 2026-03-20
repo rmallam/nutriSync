@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: nutrisync-app
+    env: node
+    region: ohio # Adjust based on preference
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: ~18.17.0
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false # Requires manual entry in Render Dashboard
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false # Requires manual entry in Render Dashboard
+      - key: GEMINI_API_KEY
+        sync: false # Requires manual entry in Render Dashboard
