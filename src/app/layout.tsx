@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from 'next/font/google';
+import { Inter, Outfit } from 'next/font/google';
 import BiometricWall from '@/components/BiometricWall';
 import "./globals.css";
 
