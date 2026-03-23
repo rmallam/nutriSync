@@ -61,6 +61,76 @@ export default function PlannerPage() {
     persistState(plannerData, newChecked);
   };
 
+  const logPlannedMeal = async (mealObj: any, mealType: string) => {
+    if (typeof mealObj === 'string') return;
+    try {
+      setLoading(true);
+      const newMeal = {
+        image_url: null,
+        name: mealObj.name,
+        items: [{
+          label: mealObj.name,
+          calories: mealObj.calories,
+          protein_g: mealObj.protein,
+          carbs_g: mealObj.carbs,
+          fat_g: mealObj.fat,
+          health_score: 8,
+          is_healthy: true
+        }],
+        total_calories: mealObj.calories,
+        total_protein: mealObj.protein,
+        total_carbs: mealObj.carbs,
+        total_fat: mealObj.fat
+      };
+      await MealStorage.saveMeal(newMeal);
+      alert(`Logged ${mealObj.name} to your Diary!`);
+    } catch (e) {
+      console.error(e);
+      alert("Failed to log meal");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderMeal = (mealData: any, mealType: string) => {
+    if (typeof mealData === 'string' || !mealData) {
+       return (
+          <div style={{ marginBottom: '12px' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{mealType}</div>
+            <div style={{ fontSize: '1.05rem', color: 'var(--text-primary)' }}>{mealData || 'No meal data'}</div>
+          </div>
+       );
+    }
+    
+    return (
+      <div style={{ padding: '16px', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', marginBottom: '8px', border: '1px solid var(--border-subtle)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+          <div style={{ paddingRight: '12px' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{mealType}</div>
+            <div style={{ fontSize: '1.05rem', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3 }}>{mealData.name}</div>
+          </div>
+          <button 
+            onClick={() => logPlannedMeal(mealData, mealType)}
+            disabled={loading}
+            style={{ flexShrink: 0, background: 'var(--accent-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-full)', padding: '6px 14px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 4px 12px rgba(0, 122, 255, 0.2)' }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Log
+          </button>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem' }}>
+          <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{mealData.calories} kcal</span>
+          <span style={{ color: 'var(--text-muted)' }}>•</span>
+          <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>
+            <span style={{color:'var(--macro-protein)'}}>{mealData.protein}g</span> P / 
+            <span style={{color:'var(--macro-carbs)'}}> {mealData.carbs}g</span> C / 
+            <span style={{color:'var(--macro-fat)'}}> {mealData.fat}g</span> F
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="container" style={{ paddingBottom: '100px', paddingTop: 'env(safe-area-inset-top, 24px)', background: 'var(--bg-tertiary)', minHeight: '100vh' }}>
       
@@ -115,19 +185,10 @@ export default function PlannerPage() {
                       <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--macro-calories)', background: 'rgba(255, 59, 48, 0.1)', padding: '4px 10px', borderRadius: 'var(--radius-full)' }}>{day.daily_calories} kcal</span>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Breakfast</div>
-                        <div style={{ fontSize: '1.05rem', color: 'var(--text-primary)' }}>{day.breakfast}</div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Lunch</div>
-                        <div style={{ fontSize: '1.05rem', color: 'var(--text-primary)' }}>{day.lunch}</div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Dinner</div>
-                        <div style={{ fontSize: '1.05rem', color: 'var(--text-primary)' }}>{day.dinner}</div>
-                      </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {renderMeal(day.breakfast, 'Breakfast')}
+                      {renderMeal(day.lunch, 'Lunch')}
+                      {renderMeal(day.dinner, 'Dinner')}
                     </div>
                   </div>
                 ))}

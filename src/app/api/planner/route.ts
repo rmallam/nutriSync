@@ -49,9 +49,39 @@ You must reply with STRICT JSON adhering exactly to the requested schema. No con
             type: Type.OBJECT,
             properties: {
               day: { type: Type.INTEGER, description: "Day number (1, 2, or 3)" },
-              breakfast: { type: Type.STRING, description: "Detailed breakfast suggestion" },
-              lunch: { type: Type.STRING, description: "Detailed lunch suggestion" },
-              dinner: { type: Type.STRING, description: "Detailed dinner suggestion" },
+              breakfast: { 
+                type: Type.OBJECT, 
+                properties: {
+                  name: { type: Type.STRING, description: "Detailed breakfast suggestion description" },
+                  calories: { type: Type.INTEGER },
+                  protein: { type: Type.INTEGER },
+                  carbs: { type: Type.INTEGER },
+                  fat: { type: Type.INTEGER }
+                },
+                required: ["name", "calories", "protein", "carbs", "fat"]
+              },
+              lunch: { 
+                type: Type.OBJECT, 
+                properties: {
+                  name: { type: Type.STRING, description: "Detailed lunch suggestion description" },
+                  calories: { type: Type.INTEGER },
+                  protein: { type: Type.INTEGER },
+                  carbs: { type: Type.INTEGER },
+                  fat: { type: Type.INTEGER }
+                },
+                required: ["name", "calories", "protein", "carbs", "fat"]
+              },
+              dinner: { 
+                type: Type.OBJECT, 
+                properties: {
+                  name: { type: Type.STRING, description: "Detailed dinner suggestion description" },
+                  calories: { type: Type.INTEGER },
+                  protein: { type: Type.INTEGER },
+                  carbs: { type: Type.INTEGER },
+                  fat: { type: Type.INTEGER }
+                },
+                required: ["name", "calories", "protein", "carbs", "fat"]
+              },
               daily_calories: { type: Type.INTEGER, description: "Estimated total daily calories" }
             },
             required: ["day", "breakfast", "lunch", "dinner", "daily_calories"]
