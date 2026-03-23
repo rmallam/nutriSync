@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import InteractiveFoodScanner from "@/components/InteractiveFoodScanner";
+import BarcodeScanner from "@/components/BarcodeScanner";
 import MacroRing from "@/components/MacroRing";
 import BottomNav from "@/components/BottomNav";
 import { MealStorage, LoggedMeal } from "@/utils/storage";
@@ -14,6 +15,7 @@ export default function Home() {
   const [loadingSession, setLoadingSession] = useState(true);
 
   const [showScanner, setShowScanner] = useState(false);
+  const [showBarcode, setShowBarcode] = useState(false);
   const [recentMeals, setRecentMeals] = useState<LoggedMeal[]>([]);
   const [dailyTotals, setDailyTotals] = useState({ calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sodium: 0, sugar: 0 });
   const [waterGlasses, setWaterGlasses] = useState(0);
@@ -78,7 +80,7 @@ export default function Home() {
     if (session) {
       loadData();
     }
-  }, [showScanner, selectedDate, session]); // Reload data when returning from scanner or changing date
+  }, [showScanner, showBarcode, selectedDate, session]); // Reload data when returning from scanner or changing date
 
   if (loadingSession) {
     return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'var(--bg-tertiary)' }}><div style={{ width: '40px', height: '40px', border: '3px solid var(--border-subtle)', borderTopColor: 'var(--accent-primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div></div>;
@@ -211,7 +213,7 @@ export default function Home() {
       <div className="container" style={{ paddingTop: 'var(--space-6)' }}>
         
         {/* Main Macro Dashboard */}
-        {!showScanner ? (
+        {!showScanner && !showBarcode ? (
           <div className="animate-fade-in">
             
             {/* Main Calorie Hero Card */}
@@ -508,7 +510,7 @@ export default function Home() {
             )}
 
           </div>
-        ) : (
+        ) : showScanner ? (
           <div className="animate-fade-in">
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
               <button 
@@ -521,13 +523,57 @@ export default function Home() {
             </div>
             <InteractiveFoodScanner onLogSuccess={() => setShowScanner(false)} />
           </div>
+        ) : (
+          <div className="animate-fade-in">
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
+              <button 
+                onClick={() => setShowBarcode(false)}
+                style={{ background: 'none', border: 'none', color: 'var(--accent-secondary)', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Back to Dashboard
+              </button>
+            </div>
+            <BarcodeScanner 
+              onLogSuccess={() => setShowBarcode(false)} 
+              onBack={() => { setShowBarcode(false); setShowScanner(true); }} 
+            />
+          </div>
         )}
 
       </div>
 
-      {/* Dynamic Floating Action Button */}
-      {!showScanner && selectedDate.toDateString() === new Date().toDateString() && (
-        <div className="animate-fade-in" style={{ position: 'fixed', bottom: '100px', right: '24px', zIndex: 50 }}>
+      {/* Dynamic Floating Action Buttons */}
+      {!showScanner && !showBarcode && selectedDate.toDateString() === new Date().toDateString() && (
+        <div className="animate-fade-in" style={{ position: 'fixed', bottom: '100px', right: '24px', zIndex: 50, display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+          
+          {/* Barcode Scanner FAB (secondary) */}
+          <button 
+            onClick={() => setShowBarcode(true)}
+            style={{ 
+              width: '48px', height: '48px', borderRadius: '24px',
+              background: '#ffffff', color: '#000000',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 8px 20px rgba(0,0,0,0.15)', cursor: 'pointer', 
+              border: '1px solid rgba(0,0,0,0.08)',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; }}
+            onMouseOut={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+            title="Scan Barcode"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+              <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+              <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+              <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+              <line x1="7" y1="12" x2="17" y2="12"></line>
+              <line x1="7" y1="8" x2="13" y2="8"></line>
+              <line x1="7" y1="16" x2="15" y2="16"></line>
+            </svg>
+          </button>
+
+          {/* AI Scanner FAB (primary) */}
           <button 
             onClick={() => setShowScanner(true)}
             style={{ 
@@ -539,6 +585,7 @@ export default function Home() {
             }}
             onMouseOver={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 16px 36px rgba(0,0,0,0.3)'; }}
             onMouseOut={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 12px 28px rgba(0,0,0,0.25)'; }}
+            title="AI Food Scanner"
           >
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           </button>
