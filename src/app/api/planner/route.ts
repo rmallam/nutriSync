@@ -1,19 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 
-// Initialize the deterministic Gemini Client
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY as string,
-});
-
-/**
- * Phase 15.2: The Intelligent Planner Route
- * This endpoint accepts the user's bodily metrics, diet goals, and historical meal affinities,
- * and executes a deterministic zero-temperature prompt to generate a highly structured
- * 3-Day Meal Plan AND an exact calculated Smart Grocery List in JSON format.
- */
 export async function POST(req: NextRequest) {
   try {
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY as string });
     const { meals, profile, culturalPrefs } = await req.json();
 
     const dietGoal = profile?.diet_goal || 'Maintain';

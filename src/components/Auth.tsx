@@ -10,6 +10,8 @@ interface AuthProps {
 export default function Auth({ onSuccess }: AuthProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,9 +23,18 @@ export default function Auth({ onSuccess }: AuthProps) {
 
     try {
       if (isSignUp) {
+        if (password !== confirmPassword) {
+            throw new Error("Passwords do not match.");
+        }
+        if (!fullName.trim()) {
+            throw new Error("Please enter your full name.");
+        }
         const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+              data: { full_name: fullName }
+          }
         });
         if (signUpError) throw signUpError;
         // If email confirmation is off, the user is signed in immediately
@@ -67,6 +78,19 @@ export default function Auth({ onSuccess }: AuthProps) {
         )}
 
         <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          {isSignUp && (
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px', color: 'var(--text-secondary)' }}>Full Name</label>
+              <input 
+                type="text" 
+                required={isSignUp}
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                style={{ width: '100%', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', outline: 'none', background: 'var(--bg-primary)' }}
+                placeholder="John Doe"
+              />
+            </div>
+          )}
           <div>
             <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px', color: 'var(--text-secondary)' }}>Email</label>
             <input 
@@ -89,6 +113,19 @@ export default function Auth({ onSuccess }: AuthProps) {
               placeholder="••••••••"
             />
           </div>
+          {isSignUp && (
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px', color: 'var(--text-secondary)' }}>Confirm Password</label>
+              <input 
+                type="password" 
+                required={isSignUp}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                style={{ width: '100%', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', outline: 'none', background: 'var(--bg-primary)' }}
+                placeholder="••••••••"
+              />
+            </div>
+          )}
           
           <button 
             type="submit" 
