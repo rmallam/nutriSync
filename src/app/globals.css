@@ -63,6 +63,10 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

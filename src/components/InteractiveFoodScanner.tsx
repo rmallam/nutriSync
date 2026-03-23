@@ -29,42 +29,73 @@ export default function InteractiveFoodScanner({ onLogSuccess }: { onLogSuccess?
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
   
+  const analyzeBase64Image = async (base64: string, mimeType: string) => {
+    try {
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64, mimeType })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setAnalysisItems(data.items || data);
+      setCustomMealName(data.meal_name || "");
+    } catch (err: any) {
+      console.error("Analysis Failed", err);
+      setError("Failed to analyze image. Ensure your GEMINI_API_KEY is correct and try again.");
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
+  const processImageResult = (url: string) => {
+    setError(null);
+    setAnalysisItems([]);
+    setSelectedClarification(null);
+    setPreviewUrl(url);
+    setImageUploaded(true);
+    setIsScanning(true);
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setError(null);
-      setAnalysisItems([]);
-      setSelectedClarification(null);
-
-      // Create a local preview URL
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-      setImageUploaded(true);
-      setIsScanning(true);
+      processImageResult(URL.createObjectURL(file));
 
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64data = reader.result as string;
         const base64 = base64data.split(',')[1];
-        
-        try {
-          const res = await fetch('/api/analyze', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ imageBase64: base64, mimeType: file.type })
-          });
-          const data = await res.json();
-          if (data.error) throw new Error(data.error);
-          setAnalysisItems(data.items || data);
-          setCustomMealName(data.meal_name || "");
-        } catch (err: any) {
-          console.error("Analysis Failed", err);
-          setError("Failed to analyze image. Ensure your GEMINI_API_KEY is correct and try again.");
-        } finally {
-          setIsScanning(false);
-        }
+        await analyzeBase64Image(base64, file.type);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleNativeCamera = async () => {
+    try {
+      const { Capacitor } = await import('@capacitor/core');
+      if (!Capacitor.isNativePlatform()) {
+        cameraRef.current?.click();
+        return;
+      }
+      
+      const { Camera, CameraResultType, CameraSource } = await import('@capacitor/camera');
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera
+      });
+
+      if (image.dataUrl) {
+        processImageResult(image.dataUrl);
+        const base64 = image.dataUrl.split(',')[1];
+        const mimeType = image.dataUrl.substring(image.dataUrl.indexOf(':') + 1, image.dataUrl.indexOf(';'));
+        await analyzeBase64Image(base64, mimeType);
+      }
+    } catch (e) {
+      console.error("Camera error or cancelled", e);
     }
   };
 
@@ -240,7 +271,7 @@ export default function InteractiveFoodScanner({ onLogSuccess }: { onLogSuccess?
                 transition: 'all var(--transition-fast)',
                 boxShadow: 'var(--shadow-md)'
               }}
-              onClick={() => cameraRef.current?.click()}
+              onClick={handleNativeCamera}
             >
               <div style={{ marginBottom: '12px' }}>
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

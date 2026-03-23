@@ -12,10 +12,10 @@ export const HealthSync = {
       return true; // Auto-pass for Web emulation
     }
     try {
-      // @ts-ignore: Next.js types don't strictly align with specialized capacitor mobile interfaces
-      await Health.requestAuthorization([
-        { read: ['steps', 'calories', 'workouts'] }
-      ]);
+      await Health.requestAuthorization({
+        // @ts-ignore: Next.js types don't strictly align with specialized capacitor mobile interfaces
+        read: ['steps', 'calories', 'workouts']
+      });
       return true;
     } catch (e) {
       console.error("Health Permissions Denied", e);
