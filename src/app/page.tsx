@@ -593,7 +593,11 @@ export default function Home() {
       )}
 
       {/* Global Bottom Navigation */}
-      <BottomNav />
+      <BottomNav onHomeClick={() => {
+        setShowScanner(false);
+        setShowBarcode(false);
+        setSelectedImage(null);
+      }} />
       
     </main>
   );

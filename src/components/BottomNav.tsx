@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 
-export default function BottomNav() {
+export default function BottomNav({ onHomeClick }: { onHomeClick?: () => void }) {
   return (
     <div style={{
       position: 'fixed',
@@ -20,7 +20,7 @@ export default function BottomNav() {
       zIndex: 50
     }}>
       {/* Home Button */}
-      <Link href="/" style={{ textDecoration: 'none', flex: 1, display: 'flex', justifyContent: 'center' }}>
+      <Link href="/" onClick={onHomeClick} style={{ textDecoration: 'none', flex: 1, display: 'flex', justifyContent: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-primary)', cursor: 'pointer' }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
