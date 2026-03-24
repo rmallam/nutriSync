@@ -32,9 +32,11 @@ ${JSON.stringify(meals?.map((m: any) => ({ name: m.name, calories: m.total_calor
 INSTRUCTIONS:
 1. Provide a short greeting using their name.
 2. Acknowledge their specific goal (${profile.diet_goal}) and current progress.
-3. Suggest one single, incredibly specific, actionable diet or lifestyle tip for TODAY based exclusively on the meals they have recently logged, their weight trend, and biological wearbles.
-4. SYNTHETIC WEARABLE INTEGRATION: If Biometric Wearable data is provided (like poor sleep < 6h, high stress, or specific menstrual phases like Luteal/Menstrual), you MUST aggressively tailor the dietary tip to directly address that biological state (e.g. suggesting magnesium for stress, stabilizing blood sugar after poor sleep, or slightly higher carbs/iron during menstruation). Give the actual biological reason! 
-5. Format the response strictly in Markdown using bullet points, bolding, and active emojis. Keep it under 150 words. Do not wrap the response in a markdown code block.`;
+3. Provide a structured, multi-paragraph Premium Health Analysis.
+4. MEAL ANALYSIS: Analyze their specific logged items. Point out nutrient gaps, caloric density, and comment on their overall dietary quality. Talk about the specific foods they logged!
+5. BIOMETRIC INTEGRATION: Explicitly connect their wearable data (sleep, stress, cycle) to their metabolic state. Explain how their biology dictates what they should eat today.
+6. PROTOCOL: End with 1-2 concrete, data-driven, highly-actionable protocols for their next meal.
+7. Format the response strictly in Markdown using headers (###), bullet points, bolding, and emojis. Do not wrap the response in a markdown code block. Provide deep, comprehensive advice!`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',

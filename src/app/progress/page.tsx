@@ -51,41 +51,71 @@ export default function ProgressPage() {
         setWeightLogs(fetchedWeight);
         
         // Load coaching tip
-        setLoadingCoach(true);
-        try {
-          const profile = await MealStorage.getUserProfile();
-          if (profile) {
-            const res = await fetch('/api/coach', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
-                profile, 
-                meals: fetchedMeals, 
-                weightLogs: fetchedWeight,
-                wearables: {
-                  sleepHours: mockSleep,
-                  stressLevel: mockStress,
-                  cyclePhase: mockCycle
-                }
-              })
-            });
-            const data = await res.json();
-            if (data.coachResponse) {
-              setCoachMessage(data.coachResponse);
+        if (!coachMessage) {
+          setLoadingCoach(true);
+          try {
+            const profile = await MealStorage.getUserProfile();
+            if (profile) {
+              const res = await fetch('/api/coach', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                  profile, 
+                  meals: fetchedMeals, 
+                  weightLogs: fetchedWeight,
+                  wearables: {
+                    sleepHours: mockSleep,
+                    stressLevel: mockStress,
+                    cyclePhase: mockCycle
+                  }
+                })
+              });
+              const data = await res.json();
+              if (data.coachResponse) {
+                setCoachMessage(data.coachResponse);
+              } else {
+                setCoachMessage("Please fill out your whole profile in the Profile tab for customized coaching!");
+              }
             } else {
-              setCoachMessage("Please fill out your whole profile in the Profile tab for customized coaching!");
+              setCoachMessage("Go to the Profile tab and tell us your goals so the AI Coach can help you!");
             }
-          } else {
-            setCoachMessage("Go to the Profile tab and tell us your goals so the AI Coach can help you!");
+          } catch (e) {
+            console.error("Coach fetch failed", e);
           }
-        } catch (e) {
-          console.error("Coach fetch failed", e);
+          setLoadingCoach(false);
         }
-        setLoadingCoach(false);
       }
     };
     fetchStorage();
-  }, [session, mockSleep, mockStress, mockCycle]); // Dependency array allows auto-refreshing the coach when mocks change
+  }, [session]); // Removed mock dependencies to prevent continuous flickering on mount and changes
+
+  const regenerateCoachInsight = async () => {
+    setLoadingCoach(true);
+    try {
+      const profile = await MealStorage.getUserProfile();
+      if (profile) {
+        const res = await fetch('/api/coach', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            profile, 
+            meals, 
+            weightLogs,
+            wearables: {
+              sleepHours: mockSleep,
+              stressLevel: mockStress,
+              cyclePhase: mockCycle
+            }
+          })
+        });
+        const data = await res.json();
+        if (data.coachResponse) setCoachMessage(data.coachResponse);
+      }
+    } catch (e) {
+      console.error("Coach regeneration failed", e);
+    }
+    setLoadingCoach(false);
+  };
 
   const handleLogWeight = async () => {
     if (!newWeight) return;
@@ -174,8 +204,7 @@ export default function ProgressPage() {
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '4px' }}>
             Progress & Insights
           </h1>
-          <p style={{ color: 'var(--text-muted)' }}>You have a <span style={{fontWeight: 700, color: 'var(--macro-calories)'}}>3 day</span> logging streak! 🔥</p>
-          <button onClick={() => supabase.auth.signOut()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.75rem', color: 'var(--error)', marginTop: '8px', fontWeight: 600 }}>Sign Out</button>
+          <p style={{ color: 'var(--text-muted)' }}>You have a <span style={{fontWeight: 700, color: '#FFFFFF'}}>3 day</span> logging streak! 🔥</p>
         </div>
       </header>
 
@@ -230,7 +259,15 @@ export default function ProgressPage() {
                </div>
 
              </div>
-             <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '12px', fontStyle: 'italic' }}>*Changing these dropdowns will automatically trigger the AI coach to regenerate an analysis based on your new biology.*</p>
+             <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
+               <button 
+                 onClick={regenerateCoachInsight} 
+                 className="btn btn-primary" 
+                 style={{ padding: '8px 16px', fontSize: '0.85rem' }}
+               >
+                 🔄 Regenerate Insights
+               </button>
+             </div>
           </div>
         )}
 
