@@ -9,6 +9,7 @@ export default function PlannerPage() {
   const [plannerData, setPlannerData] = useState<any>(null);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [activeTab, setActiveTab] = useState<'plan' | 'groceries'>('plan');
+  const [selectedDay, setSelectedDay] = useState(1);
 
   useEffect(() => {
     // Load persisted planner state on mount
@@ -109,14 +110,21 @@ export default function PlannerPage() {
             <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{mealType}</div>
             <div style={{ fontSize: '1.05rem', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3 }}>{mealData.name}</div>
           </div>
-          <button 
-            onClick={() => logPlannedMeal(mealData, mealType)}
-            disabled={loading}
-            style={{ flexShrink: 0, background: 'var(--accent-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-full)', padding: '6px 14px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 4px 12px rgba(0, 122, 255, 0.2)' }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Log
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {mealData.nutri_score && (
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: mealData.nutri_score >= 8 ? 'var(--success)' : mealData.nutri_score >= 5 ? 'var(--macro-fat)' : 'var(--macro-calories)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }} title={`NutriScore: ${mealData.nutri_score}/10`}>
+                {mealData.nutri_score}
+              </div>
+            )}
+            <button 
+              onClick={() => logPlannedMeal(mealData, mealType)}
+              disabled={loading}
+              style={{ flexShrink: 0, background: 'var(--accent-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-full)', padding: '6px 14px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 4px 12px rgba(0, 122, 255, 0.2)' }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Log
+            </button>
+          </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem' }}>
           <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{mealData.calories} kcal</span>
@@ -178,10 +186,23 @@ export default function PlannerPage() {
             {/* Meal Plan View */}
             {activeTab === 'plan' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-                {plannerData.meal_plan?.map((day: any, idx: number) => (
-                  <div key={idx} className="card" style={{ padding: 'var(--space-6)', background: 'var(--bg-primary)', borderLeft: '4px solid var(--accent-primary)' }}>
+                {/* Horizontal Day Selector */}
+                <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px', scrollbarWidth: 'none' }}>
+                  {plannerData.meal_plan?.map((day: any) => (
+                     <button
+                       key={day.day}
+                       onClick={() => setSelectedDay(day.day)}
+                       style={{ minWidth: '80px', padding: '12px', borderRadius: '16px', background: selectedDay === day.day ? 'var(--accent-primary)' : 'var(--bg-secondary)', color: selectedDay === day.day ? '#fff' : 'var(--text-primary)', border: 'none', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', boxShadow: selectedDay === day.day ? '0 4px 12px rgba(0, 122, 255, 0.3)' : 'none' }}
+                     >
+                       Day {day.day}
+                     </button>
+                  ))}
+                </div>
+
+                {plannerData.meal_plan?.filter((d: any) => d.day === selectedDay).map((day: any, idx: number) => (
+                  <div key={idx} className="animate-fade-in card" style={{ padding: 'var(--space-6)', background: 'var(--bg-primary)', borderLeft: '4px solid var(--accent-primary)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
-                      <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Day {day.day}</h3>
+                      <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Day {day.day} Meals</h3>
                       <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--macro-calories)', background: 'rgba(255, 59, 48, 0.1)', padding: '4px 10px', borderRadius: 'var(--radius-full)' }}>{day.daily_calories} kcal</span>
                     </div>
 

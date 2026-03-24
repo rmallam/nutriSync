@@ -56,9 +56,10 @@ You must reply with STRICT JSON adhering exactly to the requested schema. No con
                   calories: { type: Type.INTEGER },
                   protein: { type: Type.INTEGER },
                   carbs: { type: Type.INTEGER },
-                  fat: { type: Type.INTEGER }
+                  fat: { type: Type.INTEGER },
+                  nutri_score: { type: Type.NUMBER, description: "A score from 1.0 to 10.0 indicating micro-nutrient density." }
                 },
-                required: ["name", "calories", "protein", "carbs", "fat"]
+                required: ["name", "calories", "protein", "carbs", "fat", "nutri_score"]
               },
               lunch: { 
                 type: Type.OBJECT, 
@@ -67,9 +68,10 @@ You must reply with STRICT JSON adhering exactly to the requested schema. No con
                   calories: { type: Type.INTEGER },
                   protein: { type: Type.INTEGER },
                   carbs: { type: Type.INTEGER },
-                  fat: { type: Type.INTEGER }
+                  fat: { type: Type.INTEGER },
+                  nutri_score: { type: Type.NUMBER, description: "A score from 1.0 to 10.0 indicating micro-nutrient density." }
                 },
-                required: ["name", "calories", "protein", "carbs", "fat"]
+                required: ["name", "calories", "protein", "carbs", "fat", "nutri_score"]
               },
               dinner: { 
                 type: Type.OBJECT, 
@@ -78,9 +80,10 @@ You must reply with STRICT JSON adhering exactly to the requested schema. No con
                   calories: { type: Type.INTEGER },
                   protein: { type: Type.INTEGER },
                   carbs: { type: Type.INTEGER },
-                  fat: { type: Type.INTEGER }
+                  fat: { type: Type.INTEGER },
+                  nutri_score: { type: Type.NUMBER, description: "A score from 1.0 to 10.0 indicating micro-nutrient density." }
                 },
-                required: ["name", "calories", "protein", "carbs", "fat"]
+                required: ["name", "calories", "protein", "carbs", "fat", "nutri_score"]
               },
               daily_calories: { type: Type.INTEGER, description: "Estimated total daily calories" }
             },

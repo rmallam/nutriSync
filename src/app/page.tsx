@@ -8,6 +8,7 @@ import BottomNav from "@/components/BottomNav";
 import { MealStorage, LoggedMeal } from "@/utils/storage";
 import { supabase } from '@/utils/supabase';
 import Auth from '@/components/Auth';
+import OnboardingQuiz from '@/components/OnboardingQuiz';
 import { HealthSync } from '@/utils/health';
 
 export default function Home() {
@@ -22,6 +23,7 @@ export default function Home() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [symptomLogged, setSymptomLogged] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
   
   const [profile, setProfile] = useState<any>(null);
   const [currentWeight, setCurrentWeight] = useState(70);
@@ -60,6 +62,13 @@ export default function Home() {
     // Fetch Profile for Dynamic Macros
     const p = await MealStorage.getUserProfile();
     setProfile(p);
+    
+    // Check if onboarding is needed
+    if (!p || (!p.diet_goal && !p.target_weight_kg)) {
+      setNeedsOnboarding(true);
+      return;
+    }
+    
     const weightLogs = await MealStorage.getWeightLogs();
     if (weightLogs.length > 0) {
       setCurrentWeight(weightLogs[weightLogs.length - 1].weight_kg);
@@ -88,6 +97,13 @@ export default function Home() {
 
   if (!session) {
     return <Auth onSuccess={() => {}} />;
+  }
+
+  if (needsOnboarding) {
+    return <OnboardingQuiz onComplete={() => {
+      setNeedsOnboarding(false);
+      loadData();
+    }} />;
   }
 
   // Dynamic Macro Calculator based on Profile!
@@ -216,86 +232,55 @@ export default function Home() {
         {!showScanner && !showBarcode ? (
           <div className="animate-fade-in">
             
-            {/* Main Calorie Hero Card */}
-            <div className="card" style={{ display: 'flex',alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-4)', padding: 'var(--space-8)' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                  <span style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.04em' }}>{dailyTotals.calories}</span>
-                  <span style={{ fontSize: '1.25rem', color: 'var(--text-muted)', fontWeight: 500 }}>/{effectiveCalorieTarget}</span>
-                </div>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>Calories eaten</p>
-              </div>
-              
-              <MacroRing 
-                percentage={getPercentage(dailyTotals.calories, effectiveCalorieTarget)}
-                colorHex="var(--macro-calories)"
-                size={110}
-                strokeWidth={10}
-                value="🔥"
-              />
-            </div>
+            {/* Premium Unified Macro Dashboard Widget */}
+            <div className="card" style={{ 
+               padding: 'var(--space-6)', 
+               marginBottom: 'var(--space-6)', 
+               background: 'linear-gradient(145deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%)',
+               border: '1px solid rgba(255,255,255,0.05)',
+               boxShadow: '0 20px 40px rgba(0,0,0,0.05)'
+             }}>
+               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+                 <div>
+                   <h2 style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '4px' }}>Calories</h2>
+                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                     <span style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1 }}>{dailyTotals.calories}</span>
+                     <span style={{ fontSize: '1.2rem', color: 'var(--text-muted)', fontWeight: 600 }}>/ {effectiveCalorieTarget}</span>
+                   </div>
+                 </div>
+                 <div style={{ 
+                   background: 'rgba(255, 59, 48, 0.1)', color: 'var(--macro-calories)', 
+                   padding: '6px 14px', borderRadius: 'var(--radius-full)', 
+                   fontSize: '0.85rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px' 
+                 }}>
+                   🔥 {Math.max(0, effectiveCalorieTarget - dailyTotals.calories)} left
+                 </div>
+               </div>
 
-            {/* Sub Macros Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-2)', marginBottom: 'var(--space-8)' }}>
-              {/* Protein */}
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '12px 8px' }}>
-                <div style={{ marginBottom: '12px', textAlign: 'center' }}>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{dailyTotals.protein}<span style={{fontSize:'0.65rem', color:'var(--text-muted)'}}>/{dailyTargets.protein}g</span></div>
-                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Protein</div>
-                </div>
-                <MacroRing 
-                  percentage={getPercentage(dailyTotals.protein, dailyTargets.protein)}
-                  colorHex="var(--macro-protein)"
-                  size={50}
-                  strokeWidth={5}
-                  value="🍗"
-                />
-              </div>
-              
-              {/* Carbs */}
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '12px 8px' }}>
-                <div style={{ marginBottom: '12px', textAlign: 'center' }}>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{dailyTotals.carbs}<span style={{fontSize:'0.65rem', color:'var(--text-muted)'}}>/{dailyTargets.carbs}g</span></div>
-                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Carbs</div>
-                </div>
-                <MacroRing 
-                  percentage={getPercentage(dailyTotals.carbs, dailyTargets.carbs)}
-                  colorHex="var(--macro-carbs)"
-                  size={50}
-                  strokeWidth={5}
-                  value="🌾"
-                />
-              </div>
-
-              {/* Fats */}
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '12px 8px' }}>
-                <div style={{ marginBottom: '12px', textAlign: 'center' }}>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{dailyTotals.fat}<span style={{fontSize:'0.65rem', color:'var(--text-muted)'}}>/{dailyTargets.fats}g</span></div>
-                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Fats</div>
-                </div>
-                <MacroRing 
-                  percentage={getPercentage(dailyTotals.fat, dailyTargets.fats)}
-                  colorHex="var(--macro-fat)"
-                  size={50}
-                  strokeWidth={5}
-                  value="🥑"
-                />
-              </div>
-
-              {/* Fiber (New) */}
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '12px 8px', background: 'rgba(16, 185, 129, 0.05)', borderColor: 'rgba(16, 185, 129, 0.2)' }}>
-                <div style={{ marginBottom: '12px', textAlign: 'center' }}>
-                  <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--success)' }}>{dailyTotals.fiber}<span style={{fontSize:'0.65rem', color:'var(--success)', opacity: 0.7}}>/{dailyTargets.fiber}g</span></div>
-                  <div style={{ fontSize: '0.65rem', color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.5px', opacity: 0.8 }}>Fiber</div>
-                </div>
-                <MacroRing 
-                  percentage={getPercentage(dailyTotals.fiber, dailyTargets.fiber)}
-                  colorHex="var(--success)"
-                  size={50}
-                  strokeWidth={5}
-                  value="🥬"
-                />
-              </div>
+               {/* Sleek Horizontal Macro Progress Bars */}
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                 {[
+                   { label: 'Protein', current: dailyTotals.protein, target: dailyTargets.protein, color: 'var(--macro-protein)' },
+                   { label: 'Carbs', current: dailyTotals.carbs, target: dailyTargets.carbs, color: 'var(--macro-carbs)' },
+                   { label: 'Fats', current: dailyTotals.fat, target: dailyTargets.fats, color: 'var(--macro-fat)' },
+                 ].map((macro) => (
+                   <div key={macro.label}>
+                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '6px' }}>
+                       <span style={{ color: 'var(--text-primary)' }}>{macro.label}</span>
+                       <span style={{ color: 'var(--text-muted)' }}>{macro.current} <span style={{opacity:0.5}}>/ {macro.target}g</span></span>
+                     </div>
+                     <div style={{ width: '100%', height: '8px', background: 'var(--bg-secondary)', borderRadius: '4px', overflow: 'hidden' }}>
+                       <div style={{ 
+                         width: `${getPercentage(macro.current, macro.target)}%`, 
+                         height: '100%', 
+                         background: macro.color, 
+                         borderRadius: '4px',
+                         transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)'
+                       }}></div>
+                     </div>
+                   </div>
+                 ))}
+               </div>
             </div>
 
             {/* Phase 13 - Native Wearables UI Block */}
