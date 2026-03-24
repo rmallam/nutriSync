@@ -67,7 +67,7 @@ export default function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
             style={{
               padding: '24px', borderRadius: '16px', textAlign: 'left',
               border: goal === g.title ? '2px solid var(--accent-primary)' : '2px solid var(--border-subtle)',
-              background: goal === g.title ? 'rgba(0, 122, 255, 0.05)' : 'var(--bg-secondary)',
+              background: goal === g.title ? 'rgba(255, 255, 255, 0.1)' : 'var(--bg-secondary)',
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '16px',
               transition: 'all 0.2s'
             }}
@@ -106,7 +106,7 @@ export default function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
                 <button
                   key={g}
                   onClick={() => setGender(g)}
-                  style={{ flex: 1, padding: '16px', borderRadius: '12px', border: gender === g ? '2px solid var(--accent-primary)' : '2px solid var(--border-subtle)', background: gender === g ? 'rgba(0, 122, 255, 0.05)' : 'var(--bg-secondary)', fontWeight: 600, fontSize: '1.1rem', color: 'var(--text-primary)' }}
+                  style={{ flex: 1, padding: '16px', borderRadius: '12px', border: gender === g ? '2px solid var(--accent-primary)' : '2px solid var(--border-subtle)', background: gender === g ? 'rgba(255, 255, 255, 0.1)' : 'var(--bg-secondary)', fontWeight: 600, fontSize: '1.1rem', color: 'var(--text-primary)' }}
                 >{g}</button>
               ))}
            </div>
@@ -158,7 +158,7 @@ export default function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
             style={{
               padding: '24px', borderRadius: '16px', textAlign: 'left',
               border: activity === a.title ? '2px solid var(--accent-primary)' : '2px solid var(--border-subtle)',
-              background: activity === a.title ? 'rgba(0, 122, 255, 0.05)' : 'var(--bg-secondary)',
+              background: activity === a.title ? 'rgba(255, 255, 255, 0.1)' : 'var(--bg-secondary)',
               cursor: 'pointer'
             }}
           >
@@ -193,8 +193,8 @@ export default function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
             style={{
               padding: '16px 12px', borderRadius: '12px', textAlign: 'center',
               border: dietPref === pref ? '2px solid var(--accent-primary)' : '2px solid var(--border-subtle)',
-              background: dietPref === pref ? 'rgba(0, 122, 255, 0.05)' : 'var(--bg-secondary)',
-              color: dietPref === pref ? '#007AFF' : 'var(--text-primary)',
+              background: dietPref === pref ? 'rgba(255, 255, 255, 0.1)' : 'var(--bg-secondary)',
+              color: 'var(--text-primary)',
               fontWeight: 600, fontSize: '1rem', cursor: 'pointer'
             }}
           >
@@ -209,7 +209,7 @@ export default function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
         disabled={!dietPref || loading}
         onClick={handleComplete}
       >
-        {loading ? <div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div> : 'Complete Setup'}
+        {loading ? <div style={{ width: '20px', height: '20px', border: '2px solid rgba(0,0,0,0.1)', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div> : 'Complete Setup'}
       </button>
     </div>
   );

@@ -112,14 +112,14 @@ export default function PlannerPage() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             {mealData.nutri_score && (
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: mealData.nutri_score >= 8 ? 'var(--success)' : mealData.nutri_score >= 5 ? 'var(--macro-fat)' : 'var(--macro-calories)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }} title={`NutriScore: ${mealData.nutri_score}/10`}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: mealData.nutri_score >= 8 ? 'var(--success)' : mealData.nutri_score >= 5 ? 'var(--macro-fat)' : 'var(--macro-calories)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem', boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }} title={`NutriScore: ${mealData.nutri_score}/10`}>
                 {mealData.nutri_score}
               </div>
             )}
             <button 
               onClick={() => logPlannedMeal(mealData, mealType)}
               disabled={loading}
-              style={{ flexShrink: 0, background: 'var(--accent-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-full)', padding: '6px 14px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 4px 12px rgba(0, 122, 255, 0.2)' }}
+              style={{ flexShrink: 0, background: 'var(--accent-primary)', color: '#000', border: 'none', borderRadius: 'var(--radius-full)', padding: '6px 14px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 4px 16px rgba(255,255,255,0.15)' }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               Log
@@ -157,9 +157,9 @@ export default function PlannerPage() {
            <button 
              onClick={generateNewPlan} 
              disabled={loading}
-             style={{ background: 'var(--accent-primary)', color: '#fff', padding: '14px 24px', borderRadius: 'var(--radius-full)', fontSize: '1.05rem', fontWeight: 700, border: 'none', boxShadow: '0 8px 16px rgba(0, 122, 255, 0.2)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'transform 0.2s', width: '100%', justifyContent: 'center' }}
+             style={{ background: 'var(--accent-primary)', color: '#000', padding: '14px 24px', borderRadius: 'var(--radius-full)', fontSize: '1.05rem', fontWeight: 700, border: 'none', boxShadow: '0 8px 24px rgba(255, 255, 255, 0.15)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'transform 0.2s', width: '100%', justifyContent: 'center' }}
            >
-             {loading ? <div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div> : 'Generate New Week'}
+             {loading ? <div style={{ width: '20px', height: '20px', border: '2px solid rgba(0,0,0,0.1)', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div> : 'Generate New Week'}
            </button>
         </div>
 

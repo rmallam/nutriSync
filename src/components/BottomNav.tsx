@@ -9,7 +9,7 @@ export default function BottomNav({ onHomeClick }: { onHomeClick?: () => void })
       left: 0,
       right: 0,
       height: '80px',
-      background: 'var(--glass-bg)',
+      background: 'rgba(10, 10, 11, 0.85)',
       backdropFilter: 'blur(24px)',
       WebkitBackdropFilter: 'blur(24px)',
       borderTop: '1px solid var(--border-subtle)',
@@ -21,7 +21,7 @@ export default function BottomNav({ onHomeClick }: { onHomeClick?: () => void })
     }}>
       {/* Home Button */}
       <Link href="/" onClick={onHomeClick} style={{ textDecoration: 'none', flex: 1, display: 'flex', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-primary)', cursor: 'pointer' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-primary)', cursor: 'pointer', opacity: 1 }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -31,7 +31,7 @@ export default function BottomNav({ onHomeClick }: { onHomeClick?: () => void })
       </Link>
 
       <Link href="/planner" style={{ textDecoration: 'none', flex: 1, display: 'flex', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-primary)', cursor: 'pointer' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-muted)', cursor: 'pointer', opacity: 0.8 }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
             <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -44,7 +44,7 @@ export default function BottomNav({ onHomeClick }: { onHomeClick?: () => void })
 
       {/* Progress Button */}
       <Link href="/progress" style={{ textDecoration: 'none', flex: 1, display: 'flex', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-primary)', cursor: 'pointer' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-muted)', cursor: 'pointer', opacity: 0.8 }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
           </svg>
@@ -54,7 +54,7 @@ export default function BottomNav({ onHomeClick }: { onHomeClick?: () => void })
 
       {/* Profile Button */}
       <Link href="/profile" style={{ textDecoration: 'none', flex: 1, display: 'flex', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-primary)', cursor: 'pointer' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-muted)', cursor: 'pointer', opacity: 0.8 }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>

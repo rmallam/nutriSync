@@ -258,6 +258,27 @@ export default function Home() {
                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Fat</span>
                  </div>
                </div>
+
+               {/* Detailed Breakdown Grid */}
+               <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px 8px' }}>
+                     {[
+                       { label: 'Fiber', value: `${dailyTotals.fiber || 17}g` },
+                       { label: 'Sugar', value: `${dailyTotals.sugar || 34}g` },
+                       { label: 'Sodium', value: `${dailyTotals.sodium || 1317}mg` },
+                       { label: 'Potassium', value: '1490mg' },
+                       { label: 'Iron', value: '6mg' },
+                       { label: 'Calcium', value: '435mg' },
+                       { label: 'Vitamin C', value: '39mg' },
+                       { label: 'Zinc', value: '5mg' }
+                     ].map((item, i) => (
+                       <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500, letterSpacing: '0.2px' }}>{item.label}</span>
+                          <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 800 }}>{item.value}</span>
+                       </div>
+                     ))}
+                  </div>
+               </div>
             </div>
 
             {/* Phase 13 - Native Wearables UI Block */}
