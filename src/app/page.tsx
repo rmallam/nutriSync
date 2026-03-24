@@ -24,6 +24,7 @@ export default function Home() {
   const [symptomLogged, setSymptomLogged] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const [fabExpanded, setFabExpanded] = useState(false);
   
   const [profile, setProfile] = useState<any>(null);
   const [currentWeight, setCurrentWeight] = useState(70);
@@ -232,54 +233,30 @@ export default function Home() {
         {!showScanner && !showBarcode ? (
           <div className="animate-fade-in">
             
-            {/* Premium Unified Macro Dashboard Widget */}
-            <div className="card" style={{ 
-               padding: 'var(--space-6)', 
-               marginBottom: 'var(--space-6)', 
-               background: 'linear-gradient(145deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%)',
-               border: '1px solid rgba(255,255,255,0.05)',
-               boxShadow: '0 20px 40px rgba(0,0,0,0.05)'
-             }}>
-               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
-                 <div>
-                   <h2 style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '4px' }}>Calories</h2>
-                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-                     <span style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1 }}>{dailyTotals.calories}</span>
-                     <span style={{ fontSize: '1.2rem', color: 'var(--text-muted)', fontWeight: 600 }}>/ {effectiveCalorieTarget}</span>
-                   </div>
-                 </div>
-                 <div style={{ 
-                   background: 'rgba(255, 59, 48, 0.1)', color: 'var(--macro-calories)', 
-                   padding: '6px 14px', borderRadius: 'var(--radius-full)', 
-                   fontSize: '0.85rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px' 
-                 }}>
-                   🔥 {Math.max(0, effectiveCalorieTarget - dailyTotals.calories)} left
-                 </div>
+            {/* Premium Thick Ring Dashboard Widget */}
+            <div className="card" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)', border: 'none', background: 'var(--bg-secondary)', borderRadius: '32px' }}>
+               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                 <h2 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Today's counts</h2>
+                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Finished 🙌</span>
                </div>
-
-               {/* Sleek Horizontal Macro Progress Bars */}
-               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                 {[
-                   { label: 'Protein', current: dailyTotals.protein, target: dailyTargets.protein, color: 'var(--macro-protein)' },
-                   { label: 'Carbs', current: dailyTotals.carbs, target: dailyTargets.carbs, color: 'var(--macro-carbs)' },
-                   { label: 'Fats', current: dailyTotals.fat, target: dailyTargets.fats, color: 'var(--macro-fat)' },
-                 ].map((macro) => (
-                   <div key={macro.label}>
-                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '6px' }}>
-                       <span style={{ color: 'var(--text-primary)' }}>{macro.label}</span>
-                       <span style={{ color: 'var(--text-muted)' }}>{macro.current} <span style={{opacity:0.5}}>/ {macro.target}g</span></span>
-                     </div>
-                     <div style={{ width: '100%', height: '8px', background: 'var(--bg-secondary)', borderRadius: '4px', overflow: 'hidden' }}>
-                       <div style={{ 
-                         width: `${getPercentage(macro.current, macro.target)}%`, 
-                         height: '100%', 
-                         background: macro.color, 
-                         borderRadius: '4px',
-                         transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)'
-                       }}></div>
-                     </div>
-                   </div>
-                 ))}
+               
+               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                   <MacroRing percentage={getPercentage(dailyTotals.calories, effectiveCalorieTarget)} colorHex="var(--success)" size={75} strokeWidth={8} value={dailyTotals.calories.toString()} />
+                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Calories</span>
+                 </div>
+                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                   <MacroRing percentage={getPercentage(dailyTotals.protein, dailyTargets.protein)} colorHex="#FFFFFF" size={75} strokeWidth={8} value={`${dailyTotals.protein}g`} />
+                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Protein</span>
+                 </div>
+                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                   <MacroRing percentage={getPercentage(dailyTotals.carbs, dailyTargets.carbs)} colorHex="#FF3B30" size={75} strokeWidth={8} value={`${dailyTotals.carbs}g`} />
+                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Carbs</span>
+                 </div>
+                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                   <MacroRing percentage={getPercentage(dailyTotals.fat, dailyTargets.fats)} colorHex="#0A84FF" size={75} strokeWidth={8} value={`${dailyTotals.fat}g`} />
+                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Fat</span>
+                 </div>
                </div>
             </div>
 
@@ -451,44 +428,36 @@ export default function Home() {
               )}
             </div>
 
-            {/* Recently Uploaded Feed */}
-            <h3 style={{ fontSize: '1.1rem', marginBottom: 'var(--space-4)' }}>Recently Uploaded</h3>
+            {/* Cinematic Meal Feed */}
+            <h3 style={{ fontSize: '1.2rem', marginBottom: 'var(--space-4)', fontWeight: 800 }}>Today</h3>
             {recentMeals.length === 0 ? (
               <div className="card" style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--text-muted)' }}>
                 <p>No meals logged on this date yet.</p>
               </div>
             ) : (
-              <div className="card animate-fade-in" style={{ padding: 0, overflow: 'hidden' }}>
-                {recentMeals.map((meal, index) => (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {recentMeals.map((meal) => (
                   <div 
                     key={meal.id} 
+                    className="animate-fade-in" 
+                    style={{ position: 'relative', borderRadius: '32px', overflow: 'hidden', height: meal.image_url ? '250px' : '100px', background: 'var(--bg-secondary)', cursor: 'pointer', boxShadow: 'var(--shadow-md)' }} 
                     onClick={() => meal.image_url && setSelectedImage(meal.image_url)}
-                    style={{ cursor: meal.image_url ? 'pointer' : 'default', display: 'flex', gap: 'var(--space-4)', alignItems: 'center', padding: '16px', borderBottom: index < recentMeals.length - 1 ? '1px solid var(--border-subtle)' : 'none', transition: 'background-color 0.2s ease' }}
-                    onMouseOver={(e) => { if (meal.image_url) e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'; }}
-                    onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                   >
-                     <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: 'var(--bg-primary)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', boxShadow: 'inset 0 0 0 1px var(--border-subtle)', overflow: 'hidden' }}>
-                       {meal.image_url ? (
-                         <img src={meal.image_url} alt={meal.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                       ) : '🥗'}
-                     </div>
-                     <div style={{ flex: 1 }}>
-                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-                         <h4 style={{ fontSize: '1rem', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>{meal.name}</h4>
-                         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-                           {new Date(meal.created_at || new Date()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                         </span>
-                       </div>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem' }}>
-                         <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{meal.total_calories} kcal</span>
-                         <span style={{ color: 'var(--text-muted)' }}>•</span>
-                         <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>
-                           <span style={{color:'var(--macro-protein)'}}>{meal.total_protein}g</span> / 
-                           <span style={{color:'var(--macro-carbs)'}}> {meal.total_carbs}g</span> / 
-                           <span style={{color:'var(--macro-fat)'}}> {meal.total_fat}g</span>
-                         </span>
-                       </div>
-                     </div>
+                    {meal.image_url && <img src={meal.image_url} alt={meal.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                    <div style={{ position: 'absolute', inset: 0, background: meal.image_url ? 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 60%)' : 'transparent', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '24px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                            <span style={{ fontSize: '1.2rem' }}>🍞</span>
+                            <span style={{ color: meal.image_url ? '#fff' : 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 600 }}>{new Date(meal.created_at || new Date()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          </div>
+                          <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: meal.image_url ? '#fff' : 'var(--text-primary)', letterSpacing: '-0.02em', textShadow: meal.image_url ? '0 2px 8px rgba(0,0,0,0.5)' : 'none' }}>{meal.name}</h4>
+                        </div>
+                        <div style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)', padding: '6px 12px', borderRadius: 'var(--radius-full)', color: '#fff', fontWeight: 800, fontSize: '0.9rem' }}>
+                          {meal.total_calories} kcal
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -528,51 +497,34 @@ export default function Home() {
 
       </div>
 
-      {/* Dynamic Floating Action Buttons */}
+      {/* Animated Expanding FAB */}
       {!showScanner && !showBarcode && selectedDate.toDateString() === new Date().toDateString() && (
         <div className="animate-fade-in" style={{ position: 'fixed', bottom: '100px', right: '24px', zIndex: 50, display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
           
-          {/* Barcode Scanner FAB (secondary) */}
-          <button 
-            onClick={() => setShowBarcode(true)}
-            style={{ 
-              width: '48px', height: '48px', borderRadius: '24px',
-              background: '#ffffff', color: '#000000',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 8px 20px rgba(0,0,0,0.15)', cursor: 'pointer', 
-              border: '1px solid rgba(0,0,0,0.08)',
-              transition: 'transform 0.2s ease, box-shadow 0.2s ease'
-            }}
-            onMouseOver={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; }}
-            onMouseOut={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-            title="Scan Barcode"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
-              <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
-              <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
-              <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
-              <line x1="7" y1="12" x2="17" y2="12"></line>
-              <line x1="7" y1="8" x2="13" y2="8"></line>
-              <line x1="7" y1="16" x2="15" y2="16"></line>
-            </svg>
-          </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: fabExpanded ? 1 : 0, transform: `translateY(${fabExpanded ? '0' : '20px'})`, pointerEvents: fabExpanded ? 'auto' : 'none', transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
+             <button onClick={() => { setFabExpanded(false); setShowBarcode(true); }} style={{ width: '48px', height: '48px', borderRadius: '24px', background: '#333333', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', cursor: 'pointer' }} title="Scan Barcode">
+               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><line x1="7" y1="12" x2="17" y2="12"></line><line x1="7" y1="8" x2="13" y2="8"></line><line x1="7" y1="16" x2="15" y2="16"></line></svg>
+             </button>
+             <button style={{ width: '48px', height: '48px', borderRadius: '24px', background: 'var(--success)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', cursor: 'pointer' }} title="Call Nutritionist">
+               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+             </button>
+          </div>
 
-          {/* AI Scanner FAB (primary) */}
           <button 
-            onClick={() => setShowScanner(true)}
+            onClick={() => { if (fabExpanded) setShowScanner(true); setFabExpanded(!fabExpanded); }}
             style={{ 
-              width: '64px', height: '64px', borderRadius: '32px',
-              background: '#000000', color: '#ffffff',
+              width: '56px', height: '56px', borderRadius: '28px',
+              background: '#0A84FF', color: '#ffffff',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 12px 28px rgba(0,0,0,0.25)', cursor: 'pointer', border: 'none',
-              transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+              boxShadow: '0 12px 28px rgba(10,132,255,0.4)', cursor: 'pointer', border: 'none',
+              transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
             }}
-            onMouseOver={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 16px 36px rgba(0,0,0,0.3)'; }}
-            onMouseOut={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 12px 28px rgba(0,0,0,0.25)'; }}
-            title="AI Food Scanner"
           >
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            {fabExpanded ? (
+               <svg style={{ position: 'absolute' }} width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            ) : (
+               <svg style={{ position: 'absolute' }} width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            )}
           </button>
         </div>
       )}

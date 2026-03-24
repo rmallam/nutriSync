@@ -3,19 +3,19 @@
 @tailwind utilities;
 
 :root {
-  /* Ultra-Premium iOS Apple Aesthetic (Cal.ai Replica) */
-  --bg-primary: #F2F2F7; /* Apple Standard System Grouped Background */
-  --bg-secondary: #FFFFFF; /* Pure White Bento Cards */
-  --bg-tertiary: #F9FAFB;
+  /* Ultra-Premium True OLED Black Aesthetic (NutriScan Replica) */
+  --bg-primary: #000000; /* Pure OLED Black */
+  --bg-secondary: #0A0A0B; /* Extremely dark grey bento cards */
+  --bg-tertiary: #141415; /* Elevated elements */
   
-  --text-primary: #000000; /* Pure Black for extreme contrast */
-  --text-secondary: #1C1C1E;
+  --text-primary: #FFFFFF; /* Pure White */
+  --text-secondary: #EBEBF5;
   --text-muted: #8E8E93; /* Apple System Gray */
   
-  --accent-primary: #000000;
-  --accent-secondary: #F2F2F7;
+  --accent-primary: #FFFFFF; /* White buttons pop on black */
+  --accent-secondary: #1F1F21;
   
-  --border-subtle: rgba(0, 0, 0, 0.04);
+  --border-subtle: rgba(255, 255, 255, 0.08);
   
   --success: #34C759; /* Apple System Green */
   --error: #FF3B30; /* Apple System Red */
@@ -32,10 +32,10 @@
   --radius-lg: 32px;
   --radius-full: 9999px;
 
-  /* Deep iOS Hover Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.08);
+  /* Deep Glowing Shadows for Dark Mode */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.8);
   
   /* Font Families */
   --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -122,13 +122,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary {
   background: var(--accent-primary);
-  color: #fff;
+  color: #000000; /* Black text on white button */
 }
 
 .btn-primary:hover {
   opacity: 0.9;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 16px rgba(255,255,255,0.15);
 }
 
 .btn-primary:active {
@@ -142,7 +142,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-secondary:hover {
-  background: #e2e8f0;
+  background: var(--bg-secondary);
 }
 
 /* Layout utilities */
