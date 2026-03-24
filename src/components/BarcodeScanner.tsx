@@ -202,16 +202,16 @@ export default function BarcodeScanner({ onLogSuccess, onBack }: BarcodeScannerP
           {/* Native Camera Scan Button */}
           <div
             style={{
-              border: '2px solid var(--accent-primary)',
-              background: 'var(--accent-primary)',
-              color: 'white',
-              borderRadius: 'var(--radius-md)',
-              padding: 'var(--space-6) var(--space-4)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
+              color: 'var(--text-primary)',
+              borderRadius: '24px',
+              padding: 'var(--space-8) var(--space-4)',
               cursor: 'pointer',
               transition: 'all var(--transition-fast)',
-              boxShadow: 'var(--shadow-md)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
               textAlign: 'center',
-              marginBottom: 'var(--space-4)',
+              marginBottom: 'var(--space-6)',
               opacity: scanning ? 0.6 : 1,
             }}
             onClick={!scanning ? handleNativeScan : undefined}
@@ -227,10 +227,10 @@ export default function BarcodeScanner({ onLogSuccess, onBack }: BarcodeScannerP
                 <line x1="7" y1="16" x2="15" y2="16"></line>
               </svg>
             </div>
-            <h3 style={{ fontSize: '1.1rem', marginBottom: '4px', letterSpacing: '0' }}>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '4px', fontWeight: 700, letterSpacing: '-0.02em' }}>
               {scanning ? 'Opening Scanner...' : 'Scan Barcode'}
             </h3>
-            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
               Point camera at product barcode
             </p>
           </div>

@@ -104,35 +104,41 @@ export default function PlannerPage() {
     }
     
     return (
-      <div style={{ padding: '16px', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', marginBottom: '8px', border: '1px solid var(--border-subtle)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+      <div style={{ position: 'relative', padding: '20px', background: 'var(--bg-secondary)', borderRadius: '24px', marginBottom: '16px', border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, right: 0, width: '150px', height: '150px', background: mealType === 'Breakfast' ? 'radial-gradient(circle, rgba(255, 214, 10, 0.15) 0%, rgba(0,0,0,0) 70%)' : mealType === 'Lunch' ? 'radial-gradient(circle, rgba(52, 199, 89, 0.15) 0%, rgba(0,0,0,0) 70%)' : 'radial-gradient(circle, rgba(10, 132, 255, 0.15) 0%, rgba(0,0,0,0) 70%)', transform: 'translate(30%, -30%)', pointerEvents: 'none' }}></div>
+        
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', position: 'relative', zIndex: 1 }}>
           <div style={{ paddingRight: '12px' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{mealType}</div>
-            <div style={{ fontSize: '1.05rem', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.3 }}>{mealData.name}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+              <span style={{ fontSize: '1.2rem' }}>{mealType === 'Breakfast' ? '🌅' : mealType === 'Lunch' ? '☀️' : '🌙'}</span>
+              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>{mealType}</div>
+            </div>
+            <div style={{ fontSize: '1.2rem', color: 'var(--text-primary)', fontWeight: 800, lineHeight: 1.3, letterSpacing: '-0.02em' }}>{mealData.name}</div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {mealData.nutri_score && (
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: mealData.nutri_score >= 8 ? 'var(--success)' : mealData.nutri_score >= 5 ? 'var(--macro-fat)' : 'var(--macro-calories)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem', boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }} title={`NutriScore: ${mealData.nutri_score}/10`}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: mealData.nutri_score >= 8 ? 'var(--success)' : mealData.nutri_score >= 5 ? 'var(--macro-fat)' : 'var(--macro-calories)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }} title={`NutriScore: ${mealData.nutri_score}/10`}>
                 {mealData.nutri_score}
               </div>
             )}
             <button 
               onClick={() => logPlannedMeal(mealData, mealType)}
               disabled={loading}
-              style={{ flexShrink: 0, background: 'var(--accent-primary)', color: '#000', border: 'none', borderRadius: 'var(--radius-full)', padding: '6px 14px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 4px 16px rgba(255,255,255,0.15)' }}
+              style={{ flexShrink: 0, background: 'var(--accent-primary)', color: '#000', border: 'none', borderRadius: 'var(--radius-full)', padding: '8px 16px', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 16px rgba(255,255,255,0.2)' }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               Log
             </button>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem' }}>
-          <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{mealData.calories} kcal</span>
-          <span style={{ color: 'var(--text-muted)' }}>•</span>
-          <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>
-            <span style={{color:'var(--macro-protein)'}}>{mealData.protein}g</span> P / 
-            <span style={{color:'var(--macro-carbs)'}}> {mealData.carbs}g</span> C / 
-            <span style={{color:'var(--macro-fat)'}}> {mealData.fat}g</span> F
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', background: 'rgba(0,0,0,0.2)', padding: '10px 14px', borderRadius: '16px', position: 'relative', zIndex: 1 }}>
+          <span style={{ fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>🔥 {mealData.calories} <span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)'}}>kcal</span></span>
+          <div style={{ width: '1px', height: '14px', background: 'var(--border-subtle)' }}></div>
+          <span style={{ color: 'var(--text-primary)', fontWeight: 700, display: 'flex', gap: '10px' }}>
+            <span><span style={{color:'var(--macro-protein)'}}>{mealData.protein}g</span> P</span>
+            <span><span style={{color:'var(--macro-carbs)'}}>{mealData.carbs}g</span> C</span>
+            <span><span style={{color:'var(--macro-fat)'}}>{mealData.fat}g</span> F</span>
           </span>
         </div>
       </div>
@@ -192,7 +198,7 @@ export default function PlannerPage() {
                      <button
                        key={day.day}
                        onClick={() => setSelectedDay(day.day)}
-                       style={{ minWidth: '80px', padding: '12px', borderRadius: '16px', background: selectedDay === day.day ? 'var(--accent-primary)' : 'var(--bg-secondary)', color: selectedDay === day.day ? '#fff' : 'var(--text-primary)', border: 'none', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', boxShadow: selectedDay === day.day ? '0 4px 12px rgba(0, 122, 255, 0.3)' : 'none' }}
+                       style={{ minWidth: '80px', padding: '12px', borderRadius: '16px', background: selectedDay === day.day ? 'var(--accent-primary)' : 'var(--bg-secondary)', color: selectedDay === day.day ? '#000' : 'var(--text-primary)', border: 'none', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', boxShadow: selectedDay === day.day ? '0 4px 16px rgba(255, 255, 255, 0.4)' : 'none' }}
                      >
                        Day {day.day}
                      </button>
