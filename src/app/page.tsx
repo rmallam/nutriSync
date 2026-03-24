@@ -180,7 +180,7 @@ export default function Home() {
             </h1>
           </div>
           <div style={{ background: 'var(--macro-carbs)', color: '#fff', padding: '4px 10px', borderRadius: 'var(--radius-full)', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-            🔥 {dailyTotals.calories} kcal
+            🔥 {Number(dailyTotals.calories).toFixed(0)} kcal
           </div>
         </div>
 
@@ -242,19 +242,19 @@ export default function Home() {
                
                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                   <MacroRing percentage={getPercentage(dailyTotals.calories, effectiveCalorieTarget)} colorHex="var(--success)" size={75} strokeWidth={8} value={dailyTotals.calories.toString()} />
+                   <MacroRing percentage={getPercentage(dailyTotals.calories, effectiveCalorieTarget)} colorHex="var(--success)" size={75} strokeWidth={8} value={Number(dailyTotals.calories).toFixed(0)} />
                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Calories</span>
                  </div>
                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                   <MacroRing percentage={getPercentage(dailyTotals.protein, dailyTargets.protein)} colorHex="#FFFFFF" size={75} strokeWidth={8} value={`${dailyTotals.protein}g`} />
+                   <MacroRing percentage={getPercentage(dailyTotals.protein, dailyTargets.protein)} colorHex="#FFFFFF" size={75} strokeWidth={8} value={`${Number(dailyTotals.protein).toFixed(1)}g`} />
                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Protein</span>
                  </div>
                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                   <MacroRing percentage={getPercentage(dailyTotals.carbs, dailyTargets.carbs)} colorHex="#FF3B30" size={75} strokeWidth={8} value={`${dailyTotals.carbs}g`} />
+                   <MacroRing percentage={getPercentage(dailyTotals.carbs, dailyTargets.carbs)} colorHex="#FF3B30" size={75} strokeWidth={8} value={`${Number(dailyTotals.carbs).toFixed(1)}g`} />
                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Carbs</span>
                  </div>
                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                   <MacroRing percentage={getPercentage(dailyTotals.fat, dailyTargets.fats)} colorHex="#0A84FF" size={75} strokeWidth={8} value={`${dailyTotals.fat}g`} />
+                   <MacroRing percentage={getPercentage(dailyTotals.fat, dailyTargets.fats)} colorHex="#0A84FF" size={75} strokeWidth={8} value={`${Number(dailyTotals.fat).toFixed(1)}g`} />
                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Fat</span>
                  </div>
                </div>
@@ -475,7 +475,7 @@ export default function Home() {
                           <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: meal.image_url ? '#fff' : 'var(--text-primary)', letterSpacing: '-0.02em', textShadow: meal.image_url ? '0 2px 8px rgba(0,0,0,0.5)' : 'none' }}>{meal.name}</h4>
                         </div>
                         <div style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)', padding: '6px 12px', borderRadius: 'var(--radius-full)', color: '#fff', fontWeight: 800, fontSize: '0.9rem' }}>
-                          {meal.total_calories} kcal
+                          {Number(meal.total_calories).toFixed(0)} kcal
                         </div>
                       </div>
                     </div>

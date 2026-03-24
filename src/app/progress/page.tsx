@@ -255,7 +255,7 @@ export default function ProgressPage() {
                   <div style={{ 
                     width: '100%', 
                     height: `${d.height}px`, 
-                    background: d.status === 'over' ? 'var(--error)' : 'var(--macro-calories)',
+                    background: d.status === 'over' ? 'var(--error)' : 'rgba(255,255,255,0.15)',
                     borderRadius: 'var(--radius-sm)',
                     opacity: d.status === 'over' ? 0.8 : 1
                   }}></div>

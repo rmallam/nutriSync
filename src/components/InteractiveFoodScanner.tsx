@@ -264,7 +264,7 @@ export default function InteractiveFoodScanner({ onLogSuccess }: { onLogSuccess?
                 flex: 1,
                 border: '2px solid var(--accent-primary)',
                 background: 'var(--accent-primary)',
-                color: 'white',
+                color: '#000000',
                 borderRadius: 'var(--radius-md)', 
                 padding: 'var(--space-6) var(--space-4)',
                 cursor: 'pointer',
@@ -280,7 +280,7 @@ export default function InteractiveFoodScanner({ onLogSuccess }: { onLogSuccess?
                 </svg>
               </div>
               <h3 style={{ fontSize: '1.1rem', marginBottom: '4px', letterSpacing: '0' }}>Take Photo</h3>
-              <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem', textAlign: 'center' }}>Live Camera</p>
+              <p style={{ color: 'rgba(0,0,0,0.6)', fontSize: '0.75rem', textAlign: 'center', fontWeight: 600 }}>Live Camera</p>
             </div>
 
             {/* Gallery Upload Button */}
@@ -596,18 +596,18 @@ export default function InteractiveFoodScanner({ onLogSuccess }: { onLogSuccess?
                           </span>
                         )}
                       </td>
-                      <td style={{ padding: '12px 16px' }}>{item.calories}</td>
-                      <td style={{ padding: '12px 16px' }}>{item.protein_g}g</td>
-                      <td style={{ padding: '12px 16px' }}>{item.fat_g}g</td>
-                      <td style={{ padding: '12px 16px' }}>{item.carbs_g}g</td>
+                      <td style={{ padding: '12px 16px' }}>{Number(item.calories).toFixed(0)}</td>
+                      <td style={{ padding: '12px 16px' }}>{Number(item.protein_g).toFixed(1)}g</td>
+                      <td style={{ padding: '12px 16px' }}>{Number(item.fat_g).toFixed(1)}g</td>
+                      <td style={{ padding: '12px 16px' }}>{Number(item.carbs_g).toFixed(1)}g</td>
                     </tr>
                   ))}
                   <tr style={{ background: 'var(--bg-tertiary)', fontWeight: 600 }}>
                     <td style={{ padding: '16px', color: 'var(--text-primary)' }}>Total</td>
-                    <td style={{ padding: '16px', color: 'var(--text-primary)' }}>{totalCalories}</td>
-                    <td style={{ padding: '16px', color: 'var(--text-primary)' }}>{totalProtein}g</td>
-                    <td style={{ padding: '16px', color: 'var(--text-primary)' }}>{totalFat}g</td>
-                    <td style={{ padding: '16px', color: 'var(--text-primary)' }}>{totalCarbs}g</td>
+                    <td style={{ padding: '16px', color: 'var(--text-primary)' }}>{Number(totalCalories).toFixed(0)}</td>
+                    <td style={{ padding: '16px', color: 'var(--text-primary)' }}>{Number(totalProtein).toFixed(1)}g</td>
+                    <td style={{ padding: '16px', color: 'var(--text-primary)' }}>{Number(totalFat).toFixed(1)}g</td>
+                    <td style={{ padding: '16px', color: 'var(--text-primary)' }}>{Number(totalCarbs).toFixed(1)}g</td>
                   </tr>
                 </tbody>
               </table>
