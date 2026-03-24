@@ -217,7 +217,7 @@ export default function Home() {
                   background: isSelected ? 'var(--accent-primary)' : 'transparent',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '0.9rem', fontWeight: 600,
-                  color: isSelected ? '#fff' : 'var(--text-primary)'
+                  color: isSelected ? '#000' : 'var(--text-primary)'
                 }}>
                   {dayNum}
                 </div>

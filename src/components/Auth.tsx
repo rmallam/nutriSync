@@ -86,7 +86,7 @@ export default function Auth({ onSuccess }: AuthProps) {
                 required={isSignUp}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                style={{ width: '100%', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', outline: 'none', background: 'var(--bg-primary)' }}
+                style={{ width: '100%', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', outline: 'none', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
                 placeholder="John Doe"
               />
             </div>
@@ -121,7 +121,7 @@ export default function Auth({ onSuccess }: AuthProps) {
                 required={isSignUp}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                style={{ width: '100%', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', outline: 'none', background: 'var(--bg-primary)' }}
+                style={{ width: '100%', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', outline: 'none', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
                 placeholder="••••••••"
               />
             </div>
