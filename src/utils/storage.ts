@@ -123,6 +123,11 @@ export const MealStorage = {
         let fiber = 0;
         let sodium = 0;
         let sugar = 0;
+        let potassium = 0;
+        let iron = 0;
+        let calcium = 0;
+        let vit_c = 0;
+        let zinc = 0;
         
         // Accumulate embedded micronutrients dynamically from the raw JSON items array
         if (meal.items && Array.isArray(meal.items)) {
@@ -130,6 +135,11 @@ export const MealStorage = {
             fiber += (Number(i.fiber_g) || 0);
             sodium += (Number(i.sodium_mg) || 0);
             sugar += (Number(i.sugar_g) || 0);
+            potassium += (Number(i.potassium_mg) || 0);
+            iron += (Number(i.iron_mg) || 0);
+            calcium += (Number(i.calcium_mg) || 0);
+            vit_c += (Number(i.vit_c_mg) || 0);
+            zinc += (Number(i.zinc_mg) || 0);
           });
         }
 
@@ -140,12 +150,17 @@ export const MealStorage = {
           fat: totals.fat + (meal.total_fat || 0),
           fiber: totals.fiber + fiber,
           sodium: totals.sodium + sodium,
-          sugar: totals.sugar + sugar
+          sugar: totals.sugar + sugar,
+          potassium: totals.potassium + potassium,
+          iron: totals.iron + iron,
+          calcium: totals.calcium + calcium,
+          vit_c: totals.vit_c + vit_c,
+          zinc: totals.zinc + zinc
         };
-      }, { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sodium: 0, sugar: 0 });
+      }, { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sodium: 0, sugar: 0, potassium: 0, iron: 0, calcium: 0, vit_c: 0, zinc: 0 });
     } catch (e) {
       console.error("Failed to fetch daily totals", e);
-      return { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sodium: 0, sugar: 0 };
+      return { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sodium: 0, sugar: 0, potassium: 0, iron: 0, calcium: 0, vit_c: 0, zinc: 0 };
     }
   },
 

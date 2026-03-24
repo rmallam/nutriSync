@@ -18,7 +18,7 @@ export default function Home() {
   const [showScanner, setShowScanner] = useState(false);
   const [showBarcode, setShowBarcode] = useState(false);
   const [recentMeals, setRecentMeals] = useState<LoggedMeal[]>([]);
-  const [dailyTotals, setDailyTotals] = useState({ calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sodium: 0, sugar: 0 });
+  const [dailyTotals, setDailyTotals] = useState<any>({ calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sodium: 0, sugar: 0, potassium: 0, iron: 0, calcium: 0, vit_c: 0, zinc: 0 });
   const [waterGlasses, setWaterGlasses] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [symptomLogged, setSymptomLogged] = useState(false);
@@ -263,14 +263,14 @@ export default function Home() {
                <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px 8px' }}>
                      {[
-                       { label: 'Fiber', value: `${dailyTotals.fiber || 17}g` },
-                       { label: 'Sugar', value: `${dailyTotals.sugar || 34}g` },
-                       { label: 'Sodium', value: `${dailyTotals.sodium || 1317}mg` },
-                       { label: 'Potassium', value: '1490mg' },
-                       { label: 'Iron', value: '6mg' },
-                       { label: 'Calcium', value: '435mg' },
-                       { label: 'Vitamin C', value: '39mg' },
-                       { label: 'Zinc', value: '5mg' }
+                       { label: 'Fiber', value: `${Math.round(dailyTotals.fiber || 0)}g` },
+                       { label: 'Sugar', value: `${Math.round(dailyTotals.sugar || 0)}g` },
+                       { label: 'Sodium', value: `${Math.round(dailyTotals.sodium || 0)}mg` },
+                       { label: 'Potassium', value: `${Math.round(dailyTotals.potassium || 0)}mg` },
+                       { label: 'Iron', value: `${Math.round(dailyTotals.iron || 0)}mg` },
+                       { label: 'Calcium', value: `${Math.round(dailyTotals.calcium || 0)}mg` },
+                       { label: 'Vitamin C', value: `${Math.round(dailyTotals.vit_c || 0)}mg` },
+                       { label: 'Zinc', value: `${Math.round(dailyTotals.zinc || 0)}mg` }
                      ].map((item, i) => (
                        <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                           <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500, letterSpacing: '0.2px' }}>{item.label}</span>
