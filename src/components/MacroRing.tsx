@@ -64,9 +64,18 @@ export default function MacroRing({
       </svg>
       
       {/* Inner Content */}
-      <div style={{ textAlign: 'center', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ textAlign: 'center', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', width: `${size - (strokeWidth * 2)}px` }}>
          {value && (
-            <span style={{ fontSize: size > 100 ? '2rem' : '1.25rem', fontWeight: 700, lineHeight: 1, color: 'var(--text-primary)' }}>
+            <span style={{ 
+              fontSize: size > 100 ? '2rem' : (value.length > 5 ? '0.75rem' : value.length > 3 ? '0.95rem' : '1.15rem'), 
+              fontWeight: 800, 
+              lineHeight: 1, 
+              color: 'var(--text-primary)',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              width: '100%'
+            }}>
               {value}
             </span>
          )}

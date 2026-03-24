@@ -53,7 +53,13 @@ export const HealthSync = {
       });
 
       const totalSteps = (stepsData.samples || []).reduce((sum: number, s: any) => sum + s.value, 0);
-      const totalCalories = (caloriesData.samples || []).reduce((sum: number, c: any) => sum + c.value, 0);
+      let totalCalories = (caloriesData.samples || []).reduce((sum: number, c: any) => sum + c.value, 0);
+
+      // Fallback: If HealthKit/Google Fit has step data but no dedicated calorie objects, 
+      // estimate the active burn using a standard metabolic equivalent (0.045 kcal/step)
+      if (totalCalories === 0 && totalSteps > 0) {
+        totalCalories = totalSteps * 0.045;
+      }
 
       return { steps: Math.round(totalSteps), activeCalories: Math.round(totalCalories), isSynced: true };
     } catch (e) {
