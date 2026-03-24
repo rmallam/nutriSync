@@ -93,53 +93,94 @@ export default function PlannerPage() {
     }
   };
 
-  const renderMeal = (mealData: any, mealType: string) => {
+  const handleSwapMeal = (mealData: any, mealType: string) => {
+    // Visually interactive ghost button hook for future AI implementation
+    alert(`The AI is analyzing your bio-data to find a perfect alternative to ${mealData.name}... (Feature coming soon!)`);
+  };
+
+  const renderMeal = (mealData: any, mealType: string, isLast: boolean) => {
     if (typeof mealData === 'string' || !mealData) {
        return (
-          <div style={{ marginBottom: '12px' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{mealType}</div>
-            <div style={{ fontSize: '1.05rem', color: 'var(--text-primary)' }}>{mealData || 'No meal data'}</div>
+          <div style={{ padding: '16px', background: 'var(--bg-secondary)', borderRadius: '24px', border: '1px dashed var(--border-subtle)' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>{mealType}</div>
+            <div style={{ fontSize: '1.05rem', color: 'var(--text-muted)' }}>{mealData || 'No planned data'}</div>
           </div>
        );
     }
     
+    // Abstract Cinematic Backgrounds
+    const meshColors = {
+      Breakfast: 'radial-gradient(ellipse at top left, rgba(255, 214, 10, 0.15) 0%, rgba(0,0,0,0) 70%), radial-gradient(ellipse at bottom right, rgba(255, 149, 0, 0.1) 0%, rgba(0,0,0,0) 70%)',
+      Lunch: 'radial-gradient(ellipse at top right, rgba(52, 199, 89, 0.12) 0%, rgba(0,0,0,0) 70%), radial-gradient(ellipse at bottom left, rgba(0, 122, 255, 0.08) 0%, rgba(0,0,0,0) 70%)',
+      Dinner: 'radial-gradient(ellipse at bottom left, rgba(88, 86, 214, 0.15) 0%, rgba(0,0,0,0) 70%), radial-gradient(ellipse at top right, rgba(10, 132, 255, 0.1) 0%, rgba(0,0,0,0) 70%)'
+    };
+    const bgMesh = meshColors[mealType as keyof typeof meshColors] || meshColors.Lunch;
+
     return (
-      <div style={{ position: 'relative', padding: '20px', background: 'var(--bg-secondary)', borderRadius: '24px', marginBottom: '16px', border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: 0, right: 0, width: '150px', height: '150px', background: mealType === 'Breakfast' ? 'radial-gradient(circle, rgba(255, 214, 10, 0.15) 0%, rgba(0,0,0,0) 70%)' : mealType === 'Lunch' ? 'radial-gradient(circle, rgba(52, 199, 89, 0.15) 0%, rgba(0,0,0,0) 70%)' : 'radial-gradient(circle, rgba(10, 132, 255, 0.15) 0%, rgba(0,0,0,0) 70%)', transform: 'translate(30%, -30%)', pointerEvents: 'none' }}></div>
-        
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', position: 'relative', zIndex: 1 }}>
-          <div style={{ paddingRight: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-              <span style={{ fontSize: '1.2rem' }}>{mealType === 'Breakfast' ? '🌅' : mealType === 'Lunch' ? '☀️' : '🌙'}</span>
-              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>{mealType}</div>
-            </div>
-            <div style={{ fontSize: '1.2rem', color: 'var(--text-primary)', fontWeight: 800, lineHeight: 1.3, letterSpacing: '-0.02em' }}>{mealData.name}</div>
+      <div style={{ display: 'flex', gap: '16px' }}>
+        {/* Timeline Node & Line */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '24px', flexShrink: 0 }}>
+          <div style={{ 
+            width: '24px', height: '24px', borderRadius: '50%', background: 'var(--bg-secondary)', 
+            border: '2px solid var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 0 12px rgba(255,255,255,0.2)', zIndex: 2
+          }}>
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-primary)' }}></div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {!isLast && (
+            <div style={{ width: '2px', height: '100%', background: 'linear-gradient(to bottom, var(--accent-primary) 0%, var(--border-subtle) 100%)', opacity: 0.5, margin: '4px 0', minHeight: '60px' }}></div>
+          )}
+        </div>
+
+        {/* Cinematic Card */}
+        <div style={{ flex: 1, position: 'relative', padding: '20px', background: 'var(--bg-secondary)', borderRadius: '24px', marginBottom: isLast ? '0' : '24px', border: '1px solid var(--border-subtle)', overflow: 'hidden', boxShadow: '0 12px 32px rgba(0,0,0,0.2)' }}>
+          <div style={{ position: 'absolute', inset: 0, background: bgMesh, pointerEvents: 'none' }}></div>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', position: 'relative', zIndex: 1 }}>
+            <div style={{ paddingRight: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <span style={{ fontSize: '1.2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>{mealType === 'Breakfast' ? '🌅' : mealType === 'Lunch' ? '☀️' : '🌙'}</span>
+                <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>{mealType}</div>
+              </div>
+              <div style={{ fontSize: '1.3rem', color: 'var(--text-primary)', fontWeight: 800, lineHeight: 1.3, letterSpacing: '-0.02em', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>{mealData.name}</div>
+            </div>
             {mealData.nutri_score && (
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: mealData.nutri_score >= 8 ? 'var(--success)' : mealData.nutri_score >= 5 ? 'var(--macro-fat)' : 'var(--macro-calories)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }} title={`NutriScore: ${mealData.nutri_score}/10`}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: mealData.nutri_score >= 8 ? 'var(--success)' : mealData.nutri_score >= 5 ? 'var(--macro-fat)' : 'var(--macro-calories)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.1rem', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', flexShrink: 0 }} title={`NutriScore: ${mealData.nutri_score}/10`}>
                 {mealData.nutri_score}
               </div>
             )}
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px', position: 'relative', zIndex: 1, marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', background: 'rgba(0,0,0,0.4)', padding: '10px 14px', borderRadius: '16px', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>🔥 {mealData.calories} <span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)'}}>kcal</span></span>
+              <div style={{ width: '1px', height: '14px', background: 'var(--border-subtle)' }}></div>
+              <span style={{ color: 'var(--text-primary)', fontWeight: 700, display: 'flex', gap: '10px' }}>
+                <span><span style={{color:'var(--macro-protein)'}}>{mealData.protein}g</span> P</span>
+                <span><span style={{color:'var(--macro-carbs)'}}>{mealData.carbs}g</span> C</span>
+                <span><span style={{color:'var(--macro-fat)'}}>{mealData.fat}g</span> F</span>
+              </span>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '8px', position: 'relative', zIndex: 1 }}>
             <button 
               onClick={() => logPlannedMeal(mealData, mealType)}
               disabled={loading}
-              style={{ flexShrink: 0, background: 'var(--accent-primary)', color: '#000', border: 'none', borderRadius: 'var(--radius-full)', padding: '8px 16px', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 16px rgba(255,255,255,0.2)' }}
+              style={{ flex: 1, background: 'var(--accent-primary)', color: '#000', border: 'none', borderRadius: 'var(--radius-full)', padding: '10px 16px', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', boxShadow: '0 4px 16px rgba(255,255,255,0.15)', transition: 'transform 0.2s' }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              Log
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Log to Diary
+            </button>
+            <button 
+              onClick={() => handleSwapMeal(mealData, mealType)}
+              disabled={loading}
+              style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--text-primary)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 'var(--radius-full)', padding: '10px 16px', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', transition: 'background 0.2s' }}
+              title="Regenerate this specific meal"
+            >
+              <span style={{ fontSize: '1.1rem' }}>🪄</span> Swap
             </button>
           </div>
-        </div>
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.85rem', background: 'rgba(0,0,0,0.2)', padding: '10px 14px', borderRadius: '16px', position: 'relative', zIndex: 1 }}>
-          <span style={{ fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>🔥 {mealData.calories} <span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)'}}>kcal</span></span>
-          <div style={{ width: '1px', height: '14px', background: 'var(--border-subtle)' }}></div>
-          <span style={{ color: 'var(--text-primary)', fontWeight: 700, display: 'flex', gap: '10px' }}>
-            <span><span style={{color:'var(--macro-protein)'}}>{mealData.protein}g</span> P</span>
-            <span><span style={{color:'var(--macro-carbs)'}}>{mealData.carbs}g</span> C</span>
-            <span><span style={{color:'var(--macro-fat)'}}>{mealData.fat}g</span> F</span>
-          </span>
         </div>
       </div>
     );
@@ -157,15 +198,38 @@ export default function PlannerPage() {
 
       <div style={{ padding: '0 var(--space-4)' }}>
         
-        {/* Generate Button Card */}
-        <div className="card" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)', background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>Generate a highly optimized, personalized 3-day meal plan and exact grocery list based on your diet goals.</p>
+        {/* Glowing Generate Button Card */}
+        <div className="card" style={{ padding: 'var(--space-8)', marginBottom: 'var(--space-8)', background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', border: '1px solid var(--border-subtle)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', borderRadius: '32px' }}>
+           <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'linear-gradient(135deg, #FF9500 0%, #FF2D55 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', marginBottom: '16px', boxShadow: '0 0 30px rgba(255, 45, 85, 0.4)' }}>✨</div>
+           <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.02em' }}>The Nutrition Matrix</h2>
+           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.5 }}>
+             We use your logged meals, health biometric data, and cultural preferences to generate a mathematically perfect 3-day trajectory.
+           </p>
            <button 
              onClick={generateNewPlan} 
              disabled={loading}
-             style={{ background: 'var(--accent-primary)', color: '#000', padding: '14px 24px', borderRadius: 'var(--radius-full)', fontSize: '1.05rem', fontWeight: 700, border: 'none', boxShadow: '0 8px 24px rgba(255, 255, 255, 0.15)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'transform 0.2s', width: '100%', justifyContent: 'center' }}
+             className={loading ? "animate-pulse" : ""}
+             style={{ 
+               background: loading ? 'rgba(255,255,255,0.1)' : '#fff', 
+               color: loading ? '#fff' : '#000', 
+               padding: '16px 32px', borderRadius: 'var(--radius-full)', 
+               fontSize: '1.1rem', fontWeight: 800, border: loading ? '1px solid rgba(255,255,255,0.2)' : 'none', 
+               boxShadow: loading ? 'none' : '0 12px 32px rgba(255, 255, 255, 0.25)', 
+               cursor: loading ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', 
+               gap: '12px', transition: 'all 0.3s ease', width: '100%', justifyContent: 'center' 
+             }}
            >
-             {loading ? <div style={{ width: '20px', height: '20px', border: '2px solid rgba(0,0,0,0.1)', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div> : 'Generate New Week'}
+             {loading ? (
+               <>
+                 <div style={{ width: '20px', height: '20px', border: '3px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                 Computing Bio-Matrix...
+               </>
+             ) : (
+               <>
+                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                 Generate Future Plan
+               </>
+             )}
            </button>
         </div>
 
@@ -205,20 +269,46 @@ export default function PlannerPage() {
                   ))}
                 </div>
 
-                {plannerData.meal_plan?.filter((d: any) => d.day === selectedDay).map((day: any, idx: number) => (
-                  <div key={idx} className="animate-fade-in card" style={{ padding: 'var(--space-6)', background: 'var(--bg-primary)', borderLeft: '4px solid var(--accent-primary)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
-                      <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Day {day.day} Meals</h3>
-                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--macro-calories)', background: 'rgba(255, 59, 48, 0.1)', padding: '4px 10px', borderRadius: 'var(--radius-full)' }}>{day.daily_calories} kcal</span>
-                    </div>
+                {plannerData.meal_plan?.filter((d: any) => d.day === selectedDay).map((day: any, idx: number) => {
+                  
+                  // Compute day macros for the forecast
+                  const totalProtein = (day.breakfast?.protein || 0) + (day.lunch?.protein || 0) + (day.dinner?.protein || 0);
+                  const totalCarbs = (day.breakfast?.carbs || 0) + (day.lunch?.carbs || 0) + (day.dinner?.carbs || 0);
+                  const totalFat = (day.breakfast?.fat || 0) + (day.lunch?.fat || 0) + (day.dinner?.fat || 0);
+                  
+                  return (
+                    <div key={idx} className="animate-fade-in" style={{ padding: 'var(--space-2)' }}>
+                      
+                      {/* Daily Mathematical Forecast Dashboard */}
+                      <div className="card" style={{ background: 'var(--bg-primary)', padding: 'var(--space-6)', borderRadius: '24px', marginBottom: '32px', border: '1px solid rgba(255,255,255,0.05)', boxShadow: '0 8px 24px rgba(0,0,0,0.2)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                          <h3 style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '0.5px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Daily Forecast</h3>
+                          <div style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', padding: '6px 14px', borderRadius: 'var(--radius-full)', fontWeight: 800, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                            {day.daily_calories} kcal
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px', width: '100%', height: '12px', borderRadius: 'var(--radius-full)', overflow: 'hidden', marginBottom: '16px' }}>
+                          <div style={{ flex: totalProtein, background: 'var(--macro-protein)' }}></div>
+                          <div style={{ flex: totalCarbs, background: 'var(--macro-carbs)' }}></div>
+                          <div style={{ flex: totalFat, background: 'var(--macro-fat)' }}></div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                          <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}><span style={{display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--macro-protein)', marginRight: '6px'}}></span>{totalProtein}g Pro</span>
+                          <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}><span style={{display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--macro-carbs)', marginRight: '6px'}}></span>{totalCarbs}g Crb</span>
+                          <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}><span style={{display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--macro-fat)', marginRight: '6px'}}></span>{totalFat}g Fat</span>
+                        </div>
+                      </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {renderMeal(day.breakfast, 'Breakfast')}
-                      {renderMeal(day.lunch, 'Lunch')}
-                      {renderMeal(day.dinner, 'Dinner')}
+                      {/* Vertical Timeline View */}
+                      <div style={{ position: 'relative', paddingLeft: '8px' }}>
+                        {renderMeal(day.breakfast, 'Breakfast', false)}
+                        {renderMeal(day.lunch, 'Lunch', false)}
+                        {renderMeal(day.dinner, 'Dinner', true)}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
