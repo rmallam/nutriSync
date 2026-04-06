@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import BottomNav from "@/components/BottomNav";
-import { MealStorage, LoggedMeal, WeightLog } from "@/utils/storage";
+import { MealStorage, LoggedMeal, WeightLog, BloodTestStorage } from "@/utils/storage";
 import { supabase } from '@/utils/supabase';
 import Auth from '@/components/Auth';
 
@@ -12,6 +12,7 @@ export default function ProgressPage() {
 
   const [meals, setMeals] = useState<LoggedMeal[]>([]);
   const [weightLogs, setWeightLogs] = useState<WeightLog[]>([]);
+  const [bloodTests, setBloodTests] = useState<any[]>([]);
   const [newWeight, setNewWeight] = useState<number | ''>('');
   const [savingWeight, setSavingWeight] = useState(false);
   
@@ -47,8 +48,10 @@ export default function ProgressPage() {
       if (session) {
         const fetchedMeals = await MealStorage.getMeals();
         const fetchedWeight = await MealStorage.getWeightLogs();
+        const fetchedBloodTests = await BloodTestStorage.getHistory();
         setMeals(fetchedMeals);
         setWeightLogs(fetchedWeight);
+        setBloodTests(fetchedBloodTests);
         
         // Load coaching tip
         if (!coachMessage) {
@@ -283,6 +286,62 @@ export default function ProgressPage() {
           )}
         </div>
       </section>
+
+      {/* Biomarkers & Lab Results Dashboard */}
+      <section style={{ marginBottom: 'var(--space-8)' }}>
+         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+           <h3 style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+             <span style={{ fontSize: '1.5rem' }}>🩸</span> Biomarkers & Labs
+           </h3>
+           <a href="/reports" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', padding: '6px 12px', borderRadius: 'var(--radius-full)', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-primary)', textDecoration: 'none' }}>
+             + Upload New Report
+           </a>
+         </div>
+         <div className="card" style={{ padding: 'var(--space-6)' }}>
+            {bloodTests.length === 0 ? (
+               <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem', padding: '16px' }}>
+                 No blood tests uploaded yet. Analyze a report to supercharge your meal planner.
+               </div>
+            ) : (
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
+                   Latest Test: {new Date(bloodTests[0].created_at).toLocaleDateString()}
+                 </div>
+                 {bloodTests[0].biomarkers?.map((bm: any, idx: number) => {
+                    // Quick diff calculation if there's an older test
+                    let diffNote = '';
+                    if (bloodTests.length > 1) {
+                       const olderTest = bloodTests[1];
+                       const olderBm = olderTest.biomarkers?.find((o: any) => o.marker === bm.marker);
+                       if (olderBm) {
+                          if (olderBm.status !== bm.status) {
+                             diffNote = `(Changed from ${olderBm.status})`;
+                          } else {
+                             diffNote = `(Unchanged)`;
+                          }
+                       }
+                    }
+
+                    return (
+                      <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                         <div>
+                           <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{bm.marker}</div>
+                           {diffNote && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{diffNote}</div>}
+                         </div>
+                         <div style={{ fontSize: '0.85rem', background: bm.status.toLowerCase() === 'normal' ? 'var(--success)' : 'var(--error)', color: '#fff', padding: '4px 8px', borderRadius: '6px', fontWeight: 700 }}>
+                           {bm.status.toUpperCase()}
+                         </div>
+                      </div>
+                    );
+                 })}
+                 <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '8px', fontStyle: 'italic' }}>
+                   {bloodTests[0].summary}
+                 </p>
+               </div>
+            )}
+         </div>
+      </section>
+
       {/* Week in Review */}
       <section style={{ marginBottom: 'var(--space-8)' }}>
          <h3 style={{ fontSize: '1.25rem', marginBottom: 'var(--space-4)' }}>Weekly Tracking</h3>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import BottomNav from "@/components/BottomNav";
-import { MealStorage } from "@/utils/storage";
+import { MealStorage, BloodTestStorage } from "@/utils/storage";
 
 export default function PlannerPage() {
   const [loading, setLoading] = useState(false);
@@ -33,11 +33,12 @@ export default function PlannerPage() {
       const profile = await MealStorage.getUserProfile();
       const meals = await MealStorage.getMeals();
       const culturalPrefs = await MealStorage.getCulturalPreferences();
+      const bloodTests = await BloodTestStorage.getHistory();
       
       const res = await fetch('/api/planner', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profile, meals, culturalPrefs })
+        body: JSON.stringify({ profile, meals, culturalPrefs, bloodTests })
       });
       const json = await res.json();
       

@@ -4,7 +4,7 @@ import { GoogleGenAI, Type, Schema } from "@google/genai";
 export async function POST(req: NextRequest) {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY as string });
-    const { meals, profile, culturalPrefs } = await req.json();
+    const { meals, profile, culturalPrefs, bloodTests } = await req.json();
 
     const dietGoal = profile?.diet_goal || 'Maintain';
     const activityLevel = profile?.activity_level || 'Light';
@@ -17,12 +17,18 @@ export async function POST(req: NextRequest) {
     // Build the affinity string to make the AI personalized
     const recentMealsString = meals?.slice(0, 15).map((m: any) => m.name).join(", ");
     
+    const latestTest = (bloodTests && bloodTests.length > 0) ? bloodTests[0] : null;
+    const deficiencyString = latestTest && latestTest.biomarkers && latestTest.biomarkers.length > 0 
+      ? latestTest.biomarkers.map((b: any) => `${b.marker} (${b.status})`).join(', ') 
+      : 'None known';
+
     const userContext = `
       - Diet Goal: ${dietGoal}
       - Activity Level: ${activityLevel}
       - Target Weight: ${targetWeight} kg
       - Geographical Location: ${location}
       - Strict Dietary Restrictions: ${dietaryRestrictions}
+      - Known Nutrient Deficiencies: ${deficiencyString}
       - Recently Enjoyed Meals: ${recentMealsString || 'Standard balanced diet'}
     `;
 
@@ -35,6 +41,7 @@ CRITICAL DIRECTIVES:
 2. You MUST strictly adhere to the Dietary Restrictions [${dietaryRestrictions}]. If the user is Vegan or Halal, absolutely NO ingredients that violate these rules can exist in the meal plan or grocery list.
 3. Respect the user's diet goal. If 'Lose Weight', keep calories controlled and protein high.
 4. Use their recently eaten foods as inspiration to ensure they actually like the grocery list.
+5. If the user has Known Nutrient Deficiencies, you MUST act as a clinical pharmacist and strictly prioritize suggesting foods that naturally supplement these specific deficiencies without destroying their overall caloric goals.
 
 You must reply with STRICT JSON adhering exactly to the requested schema. No conversational text.`;
 

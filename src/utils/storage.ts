@@ -433,3 +433,54 @@ export const MealStorage = {
     }
   }
 };
+
+export interface BloodTestLog {
+  id?: string;
+  user_id?: string;
+  created_at?: string;
+  biomarkers: any[];
+  summary: string;
+}
+
+export const BloodTestStorage = {
+  getHistory: async (): Promise<BloodTestLog[]> => {
+    try {
+      // Re-use the existing supabase instance
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      if (!userId) return [];
+      
+      const { data, error } = await supabase
+        .from('blood_tests')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      return data || [];
+    } catch (e) {
+      console.error("Failed to fetch blood tests", e);
+      return [];
+    }
+  },
+
+  save: async (biomarkers: any[], summary: string): Promise<boolean> => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      if (!userId) return false;
+      
+      const { error } = await supabase.from('blood_tests').insert([{
+        user_id: userId,
+        biomarkers,
+        summary
+      }]);
+      
+      if (error) throw error;
+      return true;
+    } catch (e) {
+      console.error("Failed to save blood test", e);
+      return false;
+    }
+  }
+};
