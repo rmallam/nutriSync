@@ -4,34 +4,62 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { BloodTestStorage } from '@/utils/storage';
 
+interface UIFile {
+  name: string;
+  type: string;
+  dataUrl: string;
+}
+
 export default function ReportsPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [loading, setLoading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<UIFile[]>([]);
   const [analysisResult, setAnalysisResult] = useState<any | null>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setPreviewUrl(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    const newUIFiles: UIFile[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const dataUrl = await readFileAsDataURL(file);
+      newUIFiles.push({
+        name: file.name,
+        type: file.type,
+        dataUrl
+      });
+    }
+
+    // Append to existing files
+    setSelectedFiles(prev => [...prev, ...newUIFiles]);
+  };
+
+  const readFileAsDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const startAnalysis = async () => {
-    if (!previewUrl) return;
+    if (selectedFiles.length === 0) return;
     setLoading(true);
     
     try {
+      // Send all base64 URIs to the backend
       const res = await fetch('/api/analyze-blood-test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: previewUrl })
+        body: JSON.stringify({ files: selectedFiles.map(f => f.dataUrl) })
       });
       const json = await res.json();
       
@@ -73,7 +101,7 @@ export default function ReportsPage() {
         <h1 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.04em', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '2.2rem' }}>🩸</span> Lab Reports
         </h1>
-        <p style={{ color: 'var(--text-muted)' }}>Upload your latest blood panel to sync with your AI Meal Planner.</p>
+        <p style={{ color: 'var(--text-muted)' }}>Upload your latest blood panel, PDF, or photos to sync with your AI Meal Planner.</p>
       </header>
 
       <div style={{ padding: '0 var(--space-4)' }}>
@@ -83,40 +111,61 @@ export default function ReportsPage() {
           <div className="card animate-fade-in" style={{ padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
             <input 
               type="file" 
-              accept="image/*" 
+              accept="image/*, application/pdf" 
+              multiple
               ref={fileInputRef} 
               onChange={handleFileUpload} 
               style={{ display: 'none' }} 
             />
             
-            {!previewUrl ? (
+            {selectedFiles.length === 0 ? (
               <button 
                 onClick={() => fileInputRef.current?.click()}
                 style={{ height: '200px', border: '2px dashed var(--border-subtle)', borderRadius: '16px', background: 'transparent', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
               >
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '16px' }}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                <div style={{ fontWeight: 600 }}>Tap to Select Image</div>
-                <div style={{ fontSize: '0.8rem' }}>Take a picture of your blood work</div>
+                <div style={{ fontWeight: 600 }}>Tap to Select Files or PDFs</div>
+                <div style={{ fontSize: '0.8rem' }}>Take photos or upload PDF lab reports</div>
               </button>
             ) : (
-              <div style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border-subtle)', position: 'relative' }}>
-                <img src={previewUrl} alt="Report Preview" style={{ width: '100%', display: 'block', maxHeight: '400px', objectFit: 'cover' }} />
-                <button 
-                  onClick={() => setPreviewUrl(null)}
-                  style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff', padding: '8px', borderRadius: '50%', cursor: 'pointer' }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Selected Documents</h3>
+                  <button onClick={() => fileInputRef.current?.click()} style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontWeight: 600, cursor: 'pointer' }}>+ Add More</button>
+                </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  {selectedFiles.map((file, idx) => (
+                    <div key={idx} style={{ position: 'relative', borderRadius: '12px', border: '1px solid var(--border-subtle)', overflow: 'hidden', background: 'var(--bg-secondary)', padding: file.type.includes('image') ? '0' : '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '140px' }}>
+                      
+                      {file.type.includes('image') ? (
+                        <img src={file.dataUrl} alt={file.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <>
+                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--error)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                          <span style={{ fontSize: '0.75rem', marginTop: '8px', textAlign: 'center', wordBreak: 'break-all', padding: '0 8px', color: 'var(--text-muted)' }}>{file.name}</span>
+                        </>
+                      )}
+
+                      <button 
+                        onClick={() => removeFile(idx)}
+                        style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(0,0,0,0.7)', border: 'none', color: '#fff', padding: '6px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
             
             <button 
               onClick={startAnalysis}
-              disabled={!previewUrl || loading}
+              disabled={selectedFiles.length === 0 || loading}
               className="btn btn-primary"
               style={{ padding: '16px', fontSize: '1.1rem', background: 'var(--error)' }}
             >
-              {loading ? "Analyzing Biomarkers..." : "Analyze the Results"}
+              {loading ? "Analyzing Biomarkers..." : `Analyze ${selectedFiles.length} Document(s)`}
             </button>
           </div>
         )}

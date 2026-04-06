@@ -4,19 +4,34 @@ import { GoogleGenAI, Type, Schema } from "@google/genai";
 export async function POST(req: NextRequest) {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY as string });
-    const { imageBase64 } = await req.json();
-
-    if (!imageBase64) {
-      return NextResponse.json({ success: false, error: "Missing image" }, { status: 400 });
+    
+    // Support either a single image/pdf or multiple
+    const { imageBase64, files } = await req.json();
+    
+    let fileArray = files || [];
+    if (imageBase64 && fileArray.length === 0) {
+      fileArray = [imageBase64];
     }
 
-    // Prepare Base64 payload
-    // Strip metadata part (e.g., data:image/jpeg;base64,) if present
-    const base64Str = imageBase64.includes(',') ? imageBase64.split(',')[1] : imageBase64;
-    const mimeType = imageBase64.includes(';') ? imageBase64.substring(imageBase64.indexOf(':') + 1, imageBase64.indexOf(';')) : 'image/jpeg';
+    if (!fileArray || fileArray.length === 0) {
+      return NextResponse.json({ success: false, error: "Missing files" }, { status: 400 });
+    }
+
+    // Prepare Base64 payload for each file
+    const inlineDataParts = fileArray.map((fileBase64: string) => {
+      const base64Str = fileBase64.includes(',') ? fileBase64.split(',')[1] : fileBase64;
+      const mimeType = fileBase64.includes(';') ? fileBase64.substring(fileBase64.indexOf(':') + 1, fileBase64.indexOf(';')) : 'image/jpeg';
+      return {
+        inlineData: {
+          data: base64Str,
+          mimeType: mimeType
+        }
+      };
+    });
 
     const systemInstruction = `You are a clinical blood test analyzer AI. 
-Analyze the provided blood test report image. Identify ANY biomarkers that are listed as Low, High, Out of Range, or Deficient. Ignore normal markers to keep the payload clean unless specified explicitly.
+Analyze the provided blood test report documents, which may span multiple pages or files. 
+Identify ANY biomarkers that are listed as Low, High, Out of Range, or Deficient. Ignore normal markers to keep the payload clean unless specified explicitly.
 
 Respond STRICTLY with JSON adhering to the provided schema.`;
 
@@ -44,13 +59,8 @@ Respond STRICTLY with JSON adhering to the provided schema.`;
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: [
-        {
-          inlineData: {
-            data: base64Str,
-            mimeType: mimeType
-          }
-        },
-        { text: "Analyze this lab report and return the json payload." }
+        ...inlineDataParts,
+        { text: "Analyze these lab reports and return the json payload representing all out of range biomarkers." }
       ],
       config: {
         systemInstruction,
