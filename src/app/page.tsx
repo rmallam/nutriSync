@@ -278,28 +278,60 @@ export default function Home() {
             
             {/* Phase 14: Daily Smart Meal & Supplements Head */}
             {selectedDate.toDateString() === new Date().toDateString() && (
-               <div className="animate-fade-in" style={{ marginBottom: 'var(--space-6)' }}>
+               <div className="animate-fade-in" style={{ marginBottom: 'var(--space-8)' }}>
                   {dailyMeal && (
-                     <div className="card glass-panel" style={{ padding: 'var(--space-6)', background: 'linear-gradient(135deg, rgba(20,20,20,0.8), rgba(40,40,40,0.9))', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }}>
-                        <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Smart Meal of the Day</h2>
-                        <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '8px' }}>{dailyMeal.name}</h3>
-                        <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '16px' }}>{dailyMeal.description}</p>
-                        <div style={{ padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', borderLeft: '4px solid var(--accent-secondary)' }}>
-                           <p style={{ fontSize: '0.85rem', color: '#fff', fontStyle: 'italic' }}>"{dailyMeal.whyItWorks}"</p>
+                     <div className="card" style={{ position: 'relative', padding: '24px', background: 'var(--bg-tertiary)', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden', boxShadow: '0 8px 30px rgba(0,0,0,0.1)' }}>
+                        <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '150px', height: '150px', background: 'var(--accent-primary)', filter: 'blur(80px)', opacity: 0.15, zIndex: 0, pointerEvents: 'none' }}></div>
+                        <div style={{ position: 'absolute', bottom: '-30px', left: '-30px', width: '100px', height: '100px', background: 'var(--accent-secondary)', filter: 'blur(60px)', opacity: 0.1, zIndex: 0, pointerEvents: 'none' }}></div>
+                        
+                        <div style={{ position: 'relative', zIndex: 1 }}>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                             <span style={{ padding: '4px 10px', background: 'rgba(52, 199, 89, 0.1)', border: '1px solid rgba(52, 199, 89, 0.3)', borderRadius: '20px', fontSize: '0.7rem', fontWeight: 800, color: 'var(--success)', letterSpacing: '1px', textTransform: 'uppercase' }}>✨ AI Precision Meal</span>
+                           </div>
+                           <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', lineHeight: 1.2, color: 'var(--text-primary)' }}>{dailyMeal.name}</h3>
+                           <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: 1.5 }}>{dailyMeal.description}</p>
+                           
+                           <div style={{ padding: '14px 16px', background: 'var(--bg-secondary)', borderRadius: '12px', borderLeft: '4px solid var(--accent-primary)', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                              <span style={{ fontSize: '1.2rem', marginTop: '-2px' }}>💡</span>
+                              <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontStyle: 'italic', fontWeight: 500, lineHeight: 1.4, margin: 0 }}>"{dailyMeal.whyItWorks}"</p>
+                           </div>
                         </div>
                      </div>
                   )}
                   {requiredSupplements.length > 0 && (
-                     <div className="card" style={{ marginTop: '12px', padding: '16px', border: '1px solid var(--border-subtle)' }}>
-                        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                           <span style={{ color: 'var(--accent-primary)' }}>💊</span> Daily Supplement Log
-                        </h3>
-                        {requiredSupplements.map((supp: string, i: number) => (
-                           <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'var(--bg-secondary)', borderRadius: '8px', marginBottom: '8px', cursor: 'pointer' }}>
-                              <input type="checkbox" checked={habitStatus[supp] || false} onChange={(e) => toggleHabit(supp, e.target.checked)} style={{ width: '20px', height: '20px', accentColor: 'var(--success)' }} />
-                              <span style={{ fontWeight: 600, color: habitStatus[supp] ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: habitStatus[supp] ? 'line-through' : 'none' }}>{supp}</span>
-                           </label>
-                        ))}
+                     <div className="card" style={{ marginTop: '16px', padding: '20px', background: 'var(--bg-secondary)', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                           <h3 style={{ fontSize: '1rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+                              <span style={{ fontSize: '1.2rem' }}>💊</span> Targeted Supplements
+                           </h3>
+                           <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, background: 'var(--bg-tertiary)', padding: '4px 8px', borderRadius: '10px' }}>
+                              {requiredSupplements.filter(s => habitStatus[s]).length} / {requiredSupplements.length} Done
+                           </span>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                           {requiredSupplements.map((supp: string, i: number) => {
+                              const isDone = habitStatus[supp];
+                              return (
+                                 <button 
+                                    key={i} 
+                                    onClick={() => toggleHabit(supp, !isDone)} 
+                                    style={{ 
+                                       width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
+                                       padding: '14px 16px', borderRadius: '12px', border: isDone ? '1px solid var(--success)' : '1px solid var(--border-subtle)', 
+                                       background: isDone ? 'rgba(52, 199, 89, 0.08)' : 'var(--bg-tertiary)', 
+                                       cursor: 'pointer', transition: 'all 0.2s ease', outline: 'none'
+                                    }}
+                                 >
+                                    <span style={{ fontWeight: 700, color: isDone ? 'var(--success)' : 'var(--text-primary)', fontSize: '0.95rem', textDecoration: isDone ? 'line-through' : 'none' }}>
+                                       {supp}
+                                    </span>
+                                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: isDone ? 'none' : '2px solid var(--border-subtle)', background: isDone ? 'var(--success)' : 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s ease' }}>
+                                       {isDone && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
+                                    </div>
+                                 </button>
+                              );
+                           })}
+                        </div>
                      </div>
                   )}
                </div>
