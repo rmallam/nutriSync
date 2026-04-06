@@ -350,7 +350,10 @@ export default function ProgressPage() {
                           return (
                             <div key={'abn_'+idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                <div>
-                                 <div style={{ fontWeight: 600, color: 'var(--error)' }}>{bm.marker}</div>
+                                 <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                                   {bm.marker}
+                                   {bm.value && <span style={{ color: 'var(--error)', marginLeft: '8px', fontSize: '0.85rem', fontWeight: 700 }}>{bm.value}</span>}
+                                 </div>
                                  {diffNote && <div style={{ fontSize: '0.75rem', color: isImproved ? 'var(--success)' : 'var(--text-muted)', fontWeight: isImproved ? 700 : 500 }}>📈 Trend: {diffNote}</div>}
                                </div>
                                <div style={{ fontSize: '0.85rem', background: 'var(--error)', color: '#fff', padding: '4px 8px', borderRadius: '6px', fontWeight: 700 }}>
@@ -379,7 +382,10 @@ export default function ProgressPage() {
                                   return (
                                     <div key={'norm_'+idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                        <div>
-                                         <div style={{ fontWeight: 500, color: 'var(--text-secondary)' }}>{bm.marker}</div>
+                                         <div style={{ fontWeight: 500, color: 'var(--text-secondary)' }}>
+                                           {bm.marker}
+                                           {bm.value && <span style={{ color: 'var(--success)', marginLeft: '8px', fontSize: '0.85rem', fontWeight: 700 }}>{bm.value}</span>}
+                                         </div>
                                          {becameNormal && <div style={{ fontSize: '0.75rem', color: 'var(--success)', fontWeight: 700 }}>🎉 Improved from Abnormal!</div>}
                                        </div>
                                        <div style={{ fontSize: '0.75rem', background: 'var(--success)', color: '#fff', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
