@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import InteractiveFoodScanner from "@/components/InteractiveFoodScanner";
 import BarcodeScanner from "@/components/BarcodeScanner";
 import MacroRing from "@/components/MacroRing";
@@ -10,8 +11,10 @@ import { supabase } from '@/utils/supabase';
 import Auth from '@/components/Auth';
 import OnboardingQuiz from '@/components/OnboardingQuiz';
 import { HealthSync } from '@/utils/health';
+import { DailyMealStorage, HabitsStorage, BloodTestStorage } from '@/utils/storage';
 
 export default function Home() {
+  const router = useRouter();
   const [session, setSession] = useState<any>(null);
   const [loadingSession, setLoadingSession] = useState(true);
 
@@ -28,6 +31,11 @@ export default function Home() {
   
   const [profile, setProfile] = useState<any>(null);
   const [currentWeight, setCurrentWeight] = useState(70);
+  
+  // Phase 14 AI Analytics State
+  const [dailyMeal, setDailyMeal] = useState<any>(null);
+  const [requiredSupplements, setRequiredSupplements] = useState<string[]>([]);
+  const [habitStatus, setHabitStatus] = useState<Record<string, boolean>>({});
 
   // Phase 13 Native Wearables State
   const [nativeHealth, setNativeHealth] = useState({ steps: 0, activeCalories: 0, isSynced: false });
@@ -81,6 +89,36 @@ export default function Home() {
     if (selectedDate.toDateString() === new Date().toDateString()) {
       const metrics = await HealthSync.getDailyMetrics();
       setNativeHealth(metrics);
+
+      // Phase 14 AI Generation
+      try {
+         const bloodTests = await BloodTestStorage.getHistory();
+         let latestTest = bloodTests.length > 0 ? bloodTests[0] : null;
+         
+         if (latestTest && latestTest.biomarkers) {
+             const defs = latestTest.biomarkers.filter((b: any) => b.status.toUpperCase() === 'DEFICIENT' || b.status.toUpperCase() === 'LOW');
+             const supps = defs.map((b: any) => `${b.marker} Supplement`);
+             setRequiredSupplements(supps);
+
+             const statuses: Record<string, boolean> = {};
+             for (const supp of supps) {
+                 statuses[supp] = await HabitsStorage.checkHabitCompleted(supp);
+             }
+             setHabitStatus(statuses);
+         }
+
+         let cachedMeal = DailyMealStorage.getCachedMeal();
+         if (!cachedMeal && p) {
+             const dm = await fetch('/api/daily-meal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ meals: dayMeals, profile: p, bloodTests }) }).then(r=>r.json());
+             if (dm.success) {
+                 cachedMeal = dm.data;
+                 DailyMealStorage.setCachedMeal(cachedMeal);
+             }
+         }
+         setDailyMeal(cachedMeal);
+      } catch (e) {
+         console.error("AI Feature Load Error", e);
+      }
     } else {
       setNativeHealth({ steps: 0, activeCalories: 0, isSynced: false }); // Reset for past days
     }
@@ -141,6 +179,11 @@ export default function Home() {
     await MealStorage.logSymptom(symptom, intensity, mealId);
     setSymptomLogged(true);
     setTimeout(() => setSymptomLogged(false), 3000);
+  };
+
+  const toggleHabit = async (habit: string, completed: boolean) => {
+    setHabitStatus(prev => ({ ...prev, [habit]: completed }));
+    await HabitsStorage.toggleHabit(habit, completed);
   };
 
   return (
@@ -232,6 +275,35 @@ export default function Home() {
         {/* Main Macro Dashboard */}
         {!showScanner && !showBarcode ? (
           <div className="animate-fade-in">
+            
+            {/* Phase 14: Daily Smart Meal & Supplements Head */}
+            {selectedDate.toDateString() === new Date().toDateString() && (
+               <div className="animate-fade-in" style={{ marginBottom: 'var(--space-6)' }}>
+                  {dailyMeal && (
+                     <div className="card glass-panel" style={{ padding: 'var(--space-6)', background: 'linear-gradient(135deg, rgba(20,20,20,0.8), rgba(40,40,40,0.9))', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }}>
+                        <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Smart Meal of the Day</h2>
+                        <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '8px' }}>{dailyMeal.name}</h3>
+                        <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '16px' }}>{dailyMeal.description}</p>
+                        <div style={{ padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', borderLeft: '4px solid var(--accent-secondary)' }}>
+                           <p style={{ fontSize: '0.85rem', color: '#fff', fontStyle: 'italic' }}>"{dailyMeal.whyItWorks}"</p>
+                        </div>
+                     </div>
+                  )}
+                  {requiredSupplements.length > 0 && (
+                     <div className="card" style={{ marginTop: '12px', padding: '16px', border: '1px solid var(--border-subtle)' }}>
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                           <span style={{ color: 'var(--accent-primary)' }}>💊</span> Daily Supplement Log
+                        </h3>
+                        {requiredSupplements.map((supp: string, i: number) => (
+                           <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'var(--bg-secondary)', borderRadius: '8px', marginBottom: '8px', cursor: 'pointer' }}>
+                              <input type="checkbox" checked={habitStatus[supp] || false} onChange={(e) => toggleHabit(supp, e.target.checked)} style={{ width: '20px', height: '20px', accentColor: 'var(--success)' }} />
+                              <span style={{ fontWeight: 600, color: habitStatus[supp] ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: habitStatus[supp] ? 'line-through' : 'none' }}>{supp}</span>
+                           </label>
+                        ))}
+                     </div>
+                  )}
+               </div>
+            )}
             
             {/* Premium Thick Ring Dashboard Widget */}
             <div className="card" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)', border: 'none', background: 'var(--bg-secondary)', borderRadius: '32px' }}>
@@ -523,6 +595,9 @@ export default function Home() {
         <div className="animate-fade-in" style={{ position: 'fixed', bottom: '100px', right: '24px', zIndex: 50, display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', opacity: fabExpanded ? 1 : 0, transform: `translateY(${fabExpanded ? '0' : '20px'})`, pointerEvents: fabExpanded ? 'auto' : 'none', transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
+             <button onClick={() => { setFabExpanded(false); router.push('/menu-scanner'); }} style={{ width: '48px', height: '48px', borderRadius: '24px', background: '#333333', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', cursor: 'pointer' }} title="Menu Scanner">
+               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+             </button>
              <button onClick={() => { setFabExpanded(false); setShowBarcode(true); }} style={{ width: '48px', height: '48px', borderRadius: '24px', background: '#333333', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', cursor: 'pointer' }} title="Scan Barcode">
                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><line x1="7" y1="12" x2="17" y2="12"></line><line x1="7" y1="8" x2="13" y2="8"></line><line x1="7" y1="16" x2="15" y2="16"></line></svg>
              </button>

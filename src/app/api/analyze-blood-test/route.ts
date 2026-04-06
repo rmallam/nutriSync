@@ -52,9 +52,14 @@ Respond STRICTLY with JSON adhering to the provided schema.`;
             },
             required: ["marker", "status", "recommendation"]
           }
+        },
+        supplements_required: {
+          type: Type.ARRAY,
+          description: "List of highly recommended daily supplements based on identified severe deficiencies (e.g., Vitamin D3, Iron, B12). Leave empty if none are necessary.",
+          items: { type: Type.STRING }
         }
       },
-      required: ["summary", "biomarkers"]
+      required: ["summary", "biomarkers", "supplements_required"]
     };
 
     const response = await ai.models.generateContent({

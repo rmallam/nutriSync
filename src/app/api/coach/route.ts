@@ -5,7 +5,7 @@ const ai = new GoogleGenAI({});
 
 export async function POST(req: Request) {
   try {
-    const { profile, meals, weightLogs, wearables } = await req.json();
+    const { profile, meals, weightLogs, wearables, bloodTests } = await req.json();
 
     if (!profile) {
       return NextResponse.json({ error: 'No profile provided' }, { status: 400 });
@@ -23,6 +23,9 @@ USER PROFILE:
 WEARABLE BIOMETRICS (Oura/Apple Health Integration):
 ${wearables ? `- Sleep Last Night: ${wearables.sleepHours} hours\n- Cortisol/Stress Level: ${wearables.stressLevel}\n- Menstrual Cycle Phase: ${wearables.cyclePhase}` : 'No biometric data provided.'}
 
+BLOOD TEST HISTORY (FOR TREND ANALYSIS):
+${JSON.stringify(bloodTests?.map((t: any) => ({ date: t.created_at, biomarkers: t.biomarkers })) || [])}
+
 WEIGHT HISTORY (LATEST):
 ${JSON.stringify(weightLogs?.slice(-3) || [])}
 
@@ -32,11 +35,11 @@ ${JSON.stringify(meals?.map((m: any) => ({ name: m.name, calories: m.total_calor
 INSTRUCTIONS:
 1. Provide a short greeting using their name.
 2. Acknowledge their specific goal (${profile.diet_goal}) and current progress.
-3. Provide a structured, multi-paragraph Premium Health Analysis.
-4. MEAL ANALYSIS: Analyze their specific logged items. Point out nutrient gaps, caloric density, and comment on their overall dietary quality. Talk about the specific foods they logged!
-5. BIOMETRIC INTEGRATION: Explicitly connect their wearable data (sleep, stress, cycle) to their metabolic state. Explain how their biology dictates what they should eat today.
+3. PREDICTIVE BLOOD TREND ANALYSIS: If blood test history is provided, analyze multiple timestamps. If a marker like glucose or cholesterol is rising over time, point out the mathematical trend and warn them, even if it is technically 'normal' right now.
+4. MEAL ANALYSIS: Analyze their specific logged items. Point out nutrient gaps relative to their blood deficiencies.
+5. BIOMETRIC INTEGRATION: Explicitly connect their wearable data (sleep, stress, cycle) to their metabolic state.
 6. PROTOCOL: End with 1-2 concrete, data-driven, highly-actionable protocols for their next meal.
-7. Format the response strictly in Markdown using headers (###), bullet points, bolding, and emojis. Do not wrap the response in a markdown code block. Provide deep, comprehensive advice!`;
+7. Format the response strictly in Markdown using headers (###), bullet points, bolding, and emojis. Provide deep, comprehensive advice!`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',

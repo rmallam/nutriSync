@@ -484,3 +484,75 @@ export const BloodTestStorage = {
     }
   }
 };
+
+export const HabitsStorage = {
+  checkHabitCompleted: async (habitName: string): Promise<boolean> => {
+     try {
+        const today = new Date().toISOString().split('T')[0];
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (!userId) return false;
+
+        const { data, error } = await supabase
+          .from('user_habits')
+          .select('completed')
+          .eq('user_id', userId)
+          .eq('habit_name', habitName)
+          .eq('log_date', today)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+            // Graceful fallback to localstorage if the table doesn't exist yet!
+            if (error.message.includes('does not exist')) {
+                if (typeof window !== 'undefined') {
+                    return localStorage.getItem(`habit_${habitName}_${today}`) === 'true';
+                }
+            }
+            throw error;
+        }
+        return data?.completed || false;
+     } catch(e) {
+         return false;
+     }
+  },
+
+  toggleHabit: async (habitName: string, completed: boolean): Promise<void> => {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (!userId) return;
+
+        const { error } = await supabase.from('user_habits').upsert({
+            user_id: userId,
+            habit_name: habitName,
+            log_date: today,
+            completed
+        }, { onConflict: 'user_id,habit_name,log_date' });
+
+        if (error) {
+            if (error.message.includes('does not exist') && typeof window !== 'undefined') {
+                localStorage.setItem(`habit_${habitName}_${today}`, completed.toString());
+            } else {
+                throw error;
+            }
+        }
+      } catch(e) {
+          console.error(e);
+      }
+  }
+};
+
+export const DailyMealStorage = {
+    getCachedMeal: () => {
+        if (typeof window === 'undefined') return null;
+        const today = new Date().toISOString().split('T')[0];
+        const cachedStr = localStorage.getItem(`daily_meal_${today}`);
+        return cachedStr ? JSON.parse(cachedStr) : null;
+    },
+    setCachedMeal: (mealObj: any) => {
+        if (typeof window === 'undefined') return;
+        const today = new Date().toISOString().split('T')[0];
+        localStorage.setItem(`daily_meal_${today}`, JSON.stringify(mealObj));
+    }
+};
