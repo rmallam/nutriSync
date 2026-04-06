@@ -329,39 +329,55 @@ export default function ProgressPage() {
                          {testIdx === 0 && <span style={{ color: 'var(--accent-primary)', fontSize: '0.8rem' }}>LATEST</span>}
                        </div>
                        
-                       {test.biomarkers?.filter((bm: any) => bm.status.toLowerCase() !== 'normal').map((bm: any, idx: number) => {
-                          let diffNote = '';
-                          let isImproved = false;
-                          if (testIdx < bloodTests.length - 1) {
-                             const olderTest = bloodTests[testIdx + 1];
-                             const olderBm = olderTest.biomarkers?.find((o: any) => o.marker === bm.marker);
-                             if (olderBm) {
-                                if (olderBm.status !== bm.status) {
-                                   diffNote = `(Was ${olderBm.status})`;
-                                   isImproved = (olderBm.status.toLowerCase() === 'deficient' && bm.status.toLowerCase() === 'low');
-                                } else {
-                                   diffNote = `(Unchanged: ${bm.status})`;
-                                }
-                             } else {
-                                diffNote = `(New Finding)`;
-                             }
-                          }
+                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px' }}>
+                         {test.biomarkers?.filter((bm: any) => bm.status.toLowerCase() !== 'normal').map((bm: any, idx: number) => {
+                            let diffNote = '';
+                            let isImproved = false;
+                            if (testIdx < bloodTests.length - 1) {
+                               const olderTest = bloodTests[testIdx + 1];
+                               const olderBm = olderTest.biomarkers?.find((o: any) => o.marker === bm.marker);
+                               if (olderBm) {
+                                  if (olderBm.status !== bm.status) {
+                                     diffNote = `(Was ${olderBm.status})`;
+                                     isImproved = (olderBm.status.toLowerCase() === 'deficient' && bm.status.toLowerCase() === 'low');
+                                  } else {
+                                     diffNote = `(Unchanged)`;
+                                  }
+                               } else {
+                                  diffNote = `(New Finding)`;
+                               }
+                            }
 
-                          return (
-                            <div key={'abn_'+idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                               <div>
-                                 <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                            return (
+                              <div key={'abn_'+idx} className="card animate-fade-in" style={{ padding: '16px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+                                 <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'var(--error)' }}></div>
+                                 
+                                 <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1rem', marginBottom: '8px', lineHeight: 1.2 }}>
                                    {bm.marker}
-                                   {bm.value && <span style={{ color: 'var(--error)', marginLeft: '8px', fontSize: '0.85rem', fontWeight: 700 }}>{bm.value}</span>}
                                  </div>
-                                 {diffNote && <div style={{ fontSize: '0.75rem', color: isImproved ? 'var(--success)' : 'var(--text-muted)', fontWeight: isImproved ? 700 : 500 }}>📈 Trend: {diffNote}</div>}
-                               </div>
-                               <div style={{ fontSize: '0.85rem', background: 'var(--error)', color: '#fff', padding: '4px 8px', borderRadius: '6px', fontWeight: 700 }}>
-                                 {bm.status.toUpperCase()}
-                               </div>
-                            </div>
-                          );
-                       })}
+                                 
+                                 <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '12px', flexWrap: 'wrap' }}>
+                                   {bm.value ? (
+                                     <span style={{ color: 'var(--error)', fontSize: '1.35rem', fontWeight: 800, letterSpacing: '-0.02em' }}>{bm.value}</span>
+                                   ) : (
+                                     <span style={{ color: 'var(--error)', fontSize: '1.35rem', fontWeight: 800 }}>--</span>
+                                   )}
+                                 </div>
+                                 
+                                 <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                   <div style={{ alignSelf: 'flex-start', fontSize: '0.65rem', background: 'rgba(255, 69, 58, 0.1)', border: '1px solid rgba(255, 69, 58, 0.3)', color: 'var(--error)', padding: '4px 6px', borderRadius: '4px', fontWeight: 800, letterSpacing: '0.5px' }}>
+                                     {bm.status.toUpperCase()}
+                                   </div>
+                                   {diffNote && (
+                                      <div style={{ fontSize: '0.7rem', color: isImproved ? 'var(--success)' : 'var(--text-muted)', fontWeight: isImproved ? 800 : 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        {isImproved ? '📈' : '📉'} {diffNote}
+                                      </div>
+                                   )}
+                                 </div>
+                              </div>
+                            );
+                         })}
+                       </div>
                        
                        {test.biomarkers?.filter((bm: any) => bm.status.toLowerCase() === 'normal').length > 0 && (
                          <details style={{ marginTop: '8px' }}>
