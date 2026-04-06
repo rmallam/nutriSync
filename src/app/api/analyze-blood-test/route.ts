@@ -31,7 +31,8 @@ export async function POST(req: NextRequest) {
 
     const systemInstruction = `You are a clinical blood test analyzer AI. 
 Analyze the provided blood test report documents, which may span multiple pages or files. 
-Identify ANY biomarkers that are listed as Low, High, Out of Range, or Deficient. Ignore normal markers to keep the payload clean unless specified explicitly.
+Extract ALL readable biomarkers from the document, regardless of whether they are normal or abnormal. 
+This is for comprehensive historical tracking. Categorize their status precisely (e.g., Low, High, Normal, Deficient).
 
 Respond STRICTLY with JSON adhering to the provided schema.`;
 

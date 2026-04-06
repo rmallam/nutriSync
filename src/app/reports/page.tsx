@@ -184,11 +184,11 @@ export default function ReportsPage() {
                <p style={{ fontSize: '0.95rem', lineHeight: 1.5, color: 'var(--text-primary)' }}>{analysisResult.summary}</p>
              </div>
 
-             {analysisResult.biomarkers.length > 0 ? (
+             {analysisResult.biomarkers.filter((bm: any) => bm.status.toLowerCase() !== 'normal').length > 0 ? (
                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                 <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Identified Deficiencies</h3>
-                 {analysisResult.biomarkers.map((bm: any, idx: number) => (
-                    <div key={idx} style={{ background: 'rgba(255, 69, 58, 0.05)', border: '1px solid rgba(255, 69, 58, 0.2)', padding: '16px', borderRadius: '12px' }}>
+                 <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--error)', textTransform: 'uppercase' }}>Identified Deficiencies</h3>
+                 {analysisResult.biomarkers.filter((bm: any) => bm.status.toLowerCase() !== 'normal').map((bm: any, idx: number) => (
+                    <div key={'abn_'+idx} style={{ background: 'rgba(255, 69, 58, 0.05)', border: '1px solid rgba(255, 69, 58, 0.2)', padding: '16px', borderRadius: '12px' }}>
                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                           <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{bm.marker}</span>
                           <span style={{ fontSize: '0.8rem', background: 'var(--error)', color: '#fff', padding: '2px 8px', borderRadius: '8px', fontWeight: 700 }}>{bm.status.toUpperCase()}</span>
@@ -202,6 +202,22 @@ export default function ReportsPage() {
                 <div style={{ padding: '16px', background: 'rgba(48, 209, 88, 0.1)', border: '1px solid rgba(48, 209, 88, 0.2)', borderRadius: '12px', color: 'var(--success)', fontWeight: 600 }}>
                   Excellent! We didn't detect any severe deficiencies in this panel.
                 </div>
+             )}
+             
+             {analysisResult.biomarkers.filter((bm: any) => bm.status.toLowerCase() === 'normal').length > 0 && (
+                <details style={{ marginTop: '8px', background: 'var(--bg-primary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                  <summary style={{ fontSize: '0.9rem', color: 'var(--text-primary)', cursor: 'pointer', fontWeight: 600, outline: 'none' }}>
+                     View Normal Markers ({analysisResult.biomarkers.filter((bm: any) => bm.status.toLowerCase() === 'normal').length})
+                  </summary>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px', marginTop: '16px' }}>
+                     {analysisResult.biomarkers.filter((bm: any) => bm.status.toLowerCase() === 'normal').map((bm: any, idx: number) => (
+                        <div key={'norm_'+idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--border-subtle)' }}>
+                           <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{bm.marker}</span>
+                           <span style={{ fontSize: '0.75rem', background: 'var(--success)', color: '#fff', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>NORMAL</span>
+                        </div>
+                     ))}
+                  </div>
+                </details>
              )}
 
              <button 

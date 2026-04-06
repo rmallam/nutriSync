@@ -281,7 +281,7 @@ export default function ProgressPage() {
                Analysing your hormonal data & 7-day history...
             </div>
           ) : (
-            <div className="markdown-body" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.5', color: 'var(--text-primary)', fontSize: '0.95rem' }} dangerouslySetInnerHTML={{ __html: coachMessage ? coachMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/- (.*?)\n/g, '<li>$1</li>') : '' }}>
+            <div className="markdown-body" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.5', color: 'var(--text-primary)', fontSize: '0.95rem', maxHeight: '200px', overflowY: 'auto', paddingRight: '8px' }} dangerouslySetInnerHTML={{ __html: coachMessage ? coachMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/- (.*?)\n/g, '<li>$1</li>') : '' }}>
             </div>
           )}
         </div>
@@ -307,8 +307,7 @@ export default function ProgressPage() {
                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
                    Latest Test: {new Date(bloodTests[0].created_at).toLocaleDateString()}
                  </div>
-                 {bloodTests[0].biomarkers?.map((bm: any, idx: number) => {
-                    // Quick diff calculation if there's an older test
+                 {bloodTests[0].biomarkers?.filter((bm: any) => bm.status.toLowerCase() !== 'normal').map((bm: any, idx: number) => {
                     let diffNote = '';
                     if (bloodTests.length > 1) {
                        const olderTest = bloodTests[1];
@@ -323,17 +322,33 @@ export default function ProgressPage() {
                     }
 
                     return (
-                      <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div key={'abn_'+idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                          <div>
-                           <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{bm.marker}</div>
+                           <div style={{ fontWeight: 600, color: 'var(--error)' }}>{bm.marker}</div>
                            {diffNote && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{diffNote}</div>}
                          </div>
-                         <div style={{ fontSize: '0.85rem', background: bm.status.toLowerCase() === 'normal' ? 'var(--success)' : 'var(--error)', color: '#fff', padding: '4px 8px', borderRadius: '6px', fontWeight: 700 }}>
+                         <div style={{ fontSize: '0.85rem', background: 'var(--error)', color: '#fff', padding: '4px 8px', borderRadius: '6px', fontWeight: 700 }}>
                            {bm.status.toUpperCase()}
                          </div>
                       </div>
                     );
                  })}
+                 
+                 <details style={{ marginTop: '8px' }}>
+                    <summary style={{ fontSize: '0.9rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, outline: 'none' }}>
+                       View Normal Markers ({bloodTests[0].biomarkers?.filter((bm: any) => bm.status.toLowerCase() === 'normal').length || 0})
+                    </summary>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px', paddingLeft: '8px', borderLeft: '2px solid var(--border-subtle)' }}>
+                       {bloodTests[0].biomarkers?.filter((bm: any) => bm.status.toLowerCase() === 'normal').map((bm: any, idx: number) => (
+                          <div key={'norm_'+idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                             <div style={{ fontWeight: 500, color: 'var(--text-secondary)' }}>{bm.marker}</div>
+                             <div style={{ fontSize: '0.75rem', background: 'var(--success)', color: '#fff', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                               NORMAL
+                             </div>
+                          </div>
+                       ))}
+                    </div>
+                 </details>
                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '8px', fontStyle: 'italic' }}>
                    {bloodTests[0].summary}
                  </p>
