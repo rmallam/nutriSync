@@ -49,9 +49,22 @@ export default function ProgressPage() {
         const fetchedMeals = await MealStorage.getMeals();
         const fetchedWeight = await MealStorage.getWeightLogs();
         const fetchedBloodTests = await BloodTestStorage.getHistory();
+        
+        // Deduplicate tests for the frontend display by parsed date
+        const uniqueTestsMap = new Map();
+        const displayTests: any[] = [];
+        fetchedBloodTests.forEach(test => {
+           const match = test.summary?.match(/^\[Date:\s*(.*?)\]\s*/);
+           const displayDate = match ? match[1] : (test.created_at ? new Date(test.created_at).toISOString().split('T')[0] : 'unknown');
+           if (!uniqueTestsMap.has(displayDate)) {
+               uniqueTestsMap.set(displayDate, true);
+               displayTests.push(test);
+           }
+        });
+        
         setMeals(fetchedMeals);
         setWeightLogs(fetchedWeight);
-        setBloodTests(fetchedBloodTests);
+        setBloodTests(displayTests);
         
         // Load coaching tip
         if (!coachMessage) {

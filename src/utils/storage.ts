@@ -470,17 +470,23 @@ export const BloodTestStorage = {
       const userId = session?.user?.id;
       if (!userId) return false;
       
-      const datePrefix = report_date ? `[Date: ${report_date}] ` : '';
+      const safeReportDate = report_date || new Date().toISOString().split('T')[0];
+      const datePrefix = `[Date: ${safeReportDate}] `;
       const fullSummary = summary.startsWith('[Date:') ? summary : `${datePrefix}${summary}`;
       
       const { data: existing } = await supabase
         .from('blood_tests')
-        .select('id, summary')
+        .select('id, summary, created_at')
         .eq('user_id', userId);
         
       let existingId = null;
-      if (existing && report_date) {
-         const match = existing.find((t: any) => t.summary && t.summary.startsWith(`[Date: ${report_date}]`));
+      if (existing) {
+         const match = existing.find((t: any) => {
+             if (t.summary && t.summary.startsWith(`[Date: ${safeReportDate}]`)) return true;
+             // If summary doesn't have a date prefix, but created_at is on safeReportDate, consider it a match
+             if (!t.summary?.startsWith('[Date:') && t.created_at?.startsWith(safeReportDate)) return true;
+             return false;
+         });
          if (match) existingId = match.id;
       }
       
