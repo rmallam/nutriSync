@@ -329,7 +329,7 @@ export default function ProgressPage() {
                          {testIdx === 0 && <span style={{ color: 'var(--accent-primary)', fontSize: '0.8rem' }}>LATEST</span>}
                        </div>
                        
-                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px' }}>
+                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
                          {test.biomarkers?.filter((bm: any) => bm.status.toLowerCase() !== 'normal').map((bm: any, idx: number) => {
                             let diffNote = '';
                             let isImproved = false;
@@ -344,32 +344,32 @@ export default function ProgressPage() {
                                      diffNote = `(Unchanged)`;
                                   }
                                } else {
-                                  diffNote = `(New Finding)`;
+                                  diffNote = `(New)`;
                                }
                             }
 
                             return (
-                              <div key={'abn_'+idx} className="card animate-fade-in" style={{ padding: '16px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
-                                 <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'var(--error)' }}></div>
+                              <div key={'abn_'+idx} className="card animate-fade-in" style={{ padding: '12px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+                                 <div style={{ position: 'absolute', top: 0, left: 0, width: '3px', height: '100%', background: 'var(--error)' }}></div>
                                  
-                                 <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1rem', marginBottom: '8px', lineHeight: 1.2 }}>
+                                 <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.8rem', marginBottom: '4px', lineHeight: 1.2, wordBreak: 'break-word' }}>
                                    {bm.marker}
                                  </div>
                                  
-                                 <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '12px', flexWrap: 'wrap' }}>
+                                 <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '8px', flexWrap: 'wrap' }}>
                                    {bm.value ? (
-                                     <span style={{ color: 'var(--error)', fontSize: '1.35rem', fontWeight: 800, letterSpacing: '-0.02em' }}>{bm.value}</span>
+                                     <span style={{ color: 'var(--error)', fontSize: '1.15rem', fontWeight: 800, letterSpacing: '-0.02em' }}>{bm.value}</span>
                                    ) : (
-                                     <span style={{ color: 'var(--error)', fontSize: '1.35rem', fontWeight: 800 }}>--</span>
+                                     <span style={{ color: 'var(--error)', fontSize: '1.15rem', fontWeight: 800 }}>--</span>
                                    )}
                                  </div>
                                  
-                                 <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                   <div style={{ alignSelf: 'flex-start', fontSize: '0.65rem', background: 'rgba(255, 69, 58, 0.1)', border: '1px solid rgba(255, 69, 58, 0.3)', color: 'var(--error)', padding: '4px 6px', borderRadius: '4px', fontWeight: 800, letterSpacing: '0.5px' }}>
+                                 <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                   <div style={{ alignSelf: 'flex-start', fontSize: '0.6rem', background: 'rgba(255, 69, 58, 0.1)', border: '1px solid rgba(255, 69, 58, 0.3)', color: 'var(--error)', padding: '3px 5px', borderRadius: '4px', fontWeight: 800, letterSpacing: '0.5px' }}>
                                      {bm.status.toUpperCase()}
                                    </div>
                                    {diffNote && (
-                                      <div style={{ fontSize: '0.7rem', color: isImproved ? 'var(--success)' : 'var(--text-muted)', fontWeight: isImproved ? 800 : 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                      <div style={{ fontSize: '0.65rem', color: isImproved ? 'var(--success)' : 'var(--text-muted)', fontWeight: isImproved ? 800 : 500, display: 'flex', alignItems: 'center', gap: '3px' }}>
                                         {isImproved ? '📈' : '📉'} {diffNote}
                                       </div>
                                    )}
