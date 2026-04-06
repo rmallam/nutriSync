@@ -78,7 +78,7 @@ export default function ReportsPage() {
   const saveToDashboard = async () => {
     if (!analysisResult) return;
     setLoading(true);
-    const success = await BloodTestStorage.save(analysisResult.biomarkers, analysisResult.summary);
+    const success = await BloodTestStorage.save(analysisResult.biomarkers, analysisResult.summary, analysisResult.report_date);
     if (success) {
       router.push('/progress'); // Redirect back to Dashboard
     } else {

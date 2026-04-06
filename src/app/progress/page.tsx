@@ -303,55 +303,87 @@ export default function ProgressPage() {
                  No blood tests uploaded yet. Analyze a report to supercharge your meal planner.
                </div>
             ) : (
-               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
-                   Latest Test: {new Date(bloodTests[0].created_at).toLocaleDateString()}
-                 </div>
-                 {bloodTests[0].biomarkers?.filter((bm: any) => bm.status.toLowerCase() !== 'normal').map((bm: any, idx: number) => {
-                    let diffNote = '';
-                    if (bloodTests.length > 1) {
-                       const olderTest = bloodTests[1];
-                       const olderBm = olderTest.biomarkers?.find((o: any) => o.marker === bm.marker);
-                       if (olderBm) {
-                          if (olderBm.status !== bm.status) {
-                             diffNote = `(Changed from ${olderBm.status})`;
-                          } else {
-                             diffNote = `(Unchanged)`;
-                          }
-                       }
-                    }
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                 {bloodTests.map((test: any, testIdx: number) => {
+                   const match = test.summary?.match(/^\[Date:\s*(.*?)\]\s*/);
+                   const displayDate = match ? match[1] : new Date(test.created_at).toLocaleDateString();
+                   const displaySummary = match ? test.summary.replace(/^\[Date:\s*.*?\]\s*/, '') : test.summary;
 
-                    return (
-                      <div key={'abn_'+idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                         <div>
-                           <div style={{ fontWeight: 600, color: 'var(--error)' }}>{bm.marker}</div>
-                           {diffNote && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{diffNote}</div>}
-                         </div>
-                         <div style={{ fontSize: '0.85rem', background: 'var(--error)', color: '#fff', padding: '4px 8px', borderRadius: '6px', fontWeight: 700 }}>
-                           {bm.status.toUpperCase()}
-                         </div>
-                      </div>
-                    );
+                   return (
+                     <div key={testIdx} style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: testIdx === 0 ? 'var(--bg-secondary)' : 'transparent', padding: testIdx === 0 ? '16px' : '0', borderRadius: '12px', border: testIdx === 0 ? '1px solid var(--border-subtle)' : 'none' }}>
+                       <div style={{ fontSize: '0.9rem', color: testIdx === 0 ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: testIdx === 0 ? 700 : 500, borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                         <span>Test Date: {displayDate}</span>
+                         {testIdx === 0 && <span style={{ color: 'var(--accent-primary)', fontSize: '0.8rem' }}>LATEST</span>}
+                       </div>
+                       
+                       {test.biomarkers?.filter((bm: any) => bm.status.toLowerCase() !== 'normal').map((bm: any, idx: number) => {
+                          let diffNote = '';
+                          let isImproved = false;
+                          if (testIdx < bloodTests.length - 1) {
+                             const olderTest = bloodTests[testIdx + 1];
+                             const olderBm = olderTest.biomarkers?.find((o: any) => o.marker === bm.marker);
+                             if (olderBm) {
+                                if (olderBm.status !== bm.status) {
+                                   diffNote = `(Was ${olderBm.status})`;
+                                   isImproved = (olderBm.status.toLowerCase() === 'deficient' && bm.status.toLowerCase() === 'low');
+                                } else {
+                                   diffNote = `(Unchanged: ${bm.status})`;
+                                }
+                             } else {
+                                diffNote = `(New Finding)`;
+                             }
+                          }
+
+                          return (
+                            <div key={'abn_'+idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                               <div>
+                                 <div style={{ fontWeight: 600, color: 'var(--error)' }}>{bm.marker}</div>
+                                 {diffNote && <div style={{ fontSize: '0.75rem', color: isImproved ? 'var(--success)' : 'var(--text-muted)', fontWeight: isImproved ? 700 : 500 }}>📈 Trend: {diffNote}</div>}
+                               </div>
+                               <div style={{ fontSize: '0.85rem', background: 'var(--error)', color: '#fff', padding: '4px 8px', borderRadius: '6px', fontWeight: 700 }}>
+                                 {bm.status.toUpperCase()}
+                               </div>
+                            </div>
+                          );
+                       })}
+                       
+                       {test.biomarkers?.filter((bm: any) => bm.status.toLowerCase() === 'normal').length > 0 && (
+                         <details style={{ marginTop: '8px' }}>
+                            <summary style={{ fontSize: '0.9rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, outline: 'none' }}>
+                               View Normal Markers ({test.biomarkers.filter((bm: any) => bm.status.toLowerCase() === 'normal').length})
+                            </summary>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px', paddingLeft: '8px', borderLeft: '2px solid var(--border-subtle)' }}>
+                               {test.biomarkers.filter((bm: any) => bm.status.toLowerCase() === 'normal').map((bm: any, idx: number) => {
+                                  let becameNormal = false;
+                                  if (testIdx < bloodTests.length - 1) {
+                                     const olderTest = bloodTests[testIdx + 1];
+                                     const olderBm = olderTest.biomarkers?.find((o: any) => o.marker === bm.marker);
+                                     if (olderBm && olderBm.status.toLowerCase() !== 'normal') {
+                                        becameNormal = true;
+                                     }
+                                  }
+                                  
+                                  return (
+                                    <div key={'norm_'+idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                       <div>
+                                         <div style={{ fontWeight: 500, color: 'var(--text-secondary)' }}>{bm.marker}</div>
+                                         {becameNormal && <div style={{ fontSize: '0.75rem', color: 'var(--success)', fontWeight: 700 }}>🎉 Improved from Abnormal!</div>}
+                                       </div>
+                                       <div style={{ fontSize: '0.75rem', background: 'var(--success)', color: '#fff', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                                         NORMAL
+                                       </div>
+                                    </div>
+                                  );
+                               })}
+                            </div>
+                         </details>
+                       )}
+                       <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '8px', fontStyle: 'italic' }}>
+                         {displaySummary}
+                       </p>
+                     </div>
+                   );
                  })}
-                 
-                 <details style={{ marginTop: '8px' }}>
-                    <summary style={{ fontSize: '0.9rem', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, outline: 'none' }}>
-                       View Normal Markers ({bloodTests[0].biomarkers?.filter((bm: any) => bm.status.toLowerCase() === 'normal').length || 0})
-                    </summary>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px', paddingLeft: '8px', borderLeft: '2px solid var(--border-subtle)' }}>
-                       {bloodTests[0].biomarkers?.filter((bm: any) => bm.status.toLowerCase() === 'normal').map((bm: any, idx: number) => (
-                          <div key={'norm_'+idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                             <div style={{ fontWeight: 500, color: 'var(--text-secondary)' }}>{bm.marker}</div>
-                             <div style={{ fontSize: '0.75rem', background: 'var(--success)', color: '#fff', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
-                               NORMAL
-                             </div>
-                          </div>
-                       ))}
-                    </div>
-                 </details>
-                 <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '8px', fontStyle: 'italic' }}>
-                   {bloodTests[0].summary}
-                 </p>
                </div>
             )}
          </div>

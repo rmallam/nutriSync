@@ -464,19 +464,41 @@ export const BloodTestStorage = {
     }
   },
 
-  save: async (biomarkers: any[], summary: string): Promise<boolean> => {
+  save: async (biomarkers: any[], summary: string, report_date?: string): Promise<boolean> => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
       if (!userId) return false;
       
-      const { error } = await supabase.from('blood_tests').insert([{
-        user_id: userId,
-        biomarkers,
-        summary
-      }]);
+      const datePrefix = report_date ? `[Date: ${report_date}] ` : '';
+      const fullSummary = summary.startsWith('[Date:') ? summary : `${datePrefix}${summary}`;
       
-      if (error) throw error;
+      const { data: existing } = await supabase
+        .from('blood_tests')
+        .select('id, summary')
+        .eq('user_id', userId);
+        
+      let existingId = null;
+      if (existing && report_date) {
+         const match = existing.find((t: any) => t.summary && t.summary.startsWith(`[Date: ${report_date}]`));
+         if (match) existingId = match.id;
+      }
+      
+      if (existingId) {
+        const { error } = await supabase.from('blood_tests').update({
+          biomarkers,
+          summary: fullSummary
+        }).eq('id', existingId)
+          .eq('user_id', userId); // For extra security
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('blood_tests').insert([{
+          user_id: userId,
+          biomarkers,
+          summary: fullSummary
+        }]);
+        if (error) throw error;
+      }
       return true;
     } catch (e) {
       console.error("Failed to save blood test", e);

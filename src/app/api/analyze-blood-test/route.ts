@@ -46,7 +46,7 @@ Respond STRICTLY with JSON adhering to the provided schema.`;
             type: Type.OBJECT,
             properties: {
               marker: { type: Type.STRING, description: "Name of the biomarker (e.g., Iron, Vitamin D, Cholesterol)" },
-              status: { type: Type.STRING, description: "Status: 'Low', 'High', or 'Deficient'" },
+              status: { type: Type.STRING, description: "Status: 'Low', 'High', 'Deficient', or 'Normal'" },
               value: { type: Type.STRING, description: "The actual numeric value read from the chart if available" },
               recommendation: { type: Type.STRING, description: "One-sentence dietary recommendation (e.g., 'Increase intake of leafy greens and red meat.')" }
             },
@@ -57,16 +57,20 @@ Respond STRICTLY with JSON adhering to the provided schema.`;
           type: Type.ARRAY,
           description: "List of highly recommended daily supplements based on identified severe deficiencies (e.g., Vitamin D3, Iron, B12). Leave empty if none are necessary.",
           items: { type: Type.STRING }
+        },
+        report_date: {
+          type: Type.STRING,
+          description: "The official date of the lab test report in YYYY-MM-DD format. If not explicitly found on the document, just return the current date (assume today)."
         }
       },
-      required: ["summary", "biomarkers", "supplements_required"]
+      required: ["summary", "biomarkers", "supplements_required", "report_date"]
     };
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: [
         ...inlineDataParts,
-        { text: "Analyze these lab reports and return the json payload representing all out of range biomarkers." }
+        { text: "Analyze these lab reports and return the json payload representing ALL biomarkers, including normal ones." }
       ],
       config: {
         systemInstruction,
