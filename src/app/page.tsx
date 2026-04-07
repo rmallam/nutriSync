@@ -96,8 +96,15 @@ export default function Home() {
          let latestTest = bloodTests.length > 0 ? bloodTests[0] : null;
          
          if (latestTest && latestTest.biomarkers) {
-             const defs = latestTest.biomarkers.filter((b: any) => b.status.toUpperCase() === 'DEFICIENT' || b.status.toUpperCase() === 'LOW');
-             const supps = defs.map((b: any) => `${b.marker} Supplement`);
+             const metaSupps = latestTest.biomarkers.find((b: any) => b.marker === '__SUPPLEMENTS__' && b.status === 'META');
+             let supps: string[] = [];
+             if (metaSupps && metaSupps.value) {
+                 supps = metaSupps.value.split(',').map((s: string) => s.trim()).filter((s: string) => s);
+             } else {
+                 // Fallback for older tests without AI supplement extraction
+                 const defs = latestTest.biomarkers.filter((b: any) => (b.status.toUpperCase() === 'DEFICIENT' || b.status.toUpperCase() === 'LOW') && b.status !== 'META');
+                 supps = defs.map((b: any) => `${b.marker} Supplement`);
+             }
              setRequiredSupplements(supps);
 
              const statuses: Record<string, boolean> = {};

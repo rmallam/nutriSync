@@ -531,7 +531,7 @@ export const HabitsStorage = {
 
         if (error && error.code !== 'PGRST116') {
             // Graceful fallback to localstorage if the table doesn't exist yet!
-            if (error.message.includes('does not exist')) {
+            if ((error.message && error.message.includes('does not exist')) || error.code === 'PGRST205') {
                 if (typeof window !== 'undefined') {
                     return localStorage.getItem(`habit_${habitName}_${today}`) === 'true';
                 }
@@ -559,7 +559,7 @@ export const HabitsStorage = {
         }, { onConflict: 'user_id,habit_name,log_date' });
 
         if (error) {
-            if (error.message.includes('does not exist') && typeof window !== 'undefined') {
+            if (((error.message && error.message.includes('does not exist')) || error.code === 'PGRST205') && typeof window !== 'undefined') {
                 localStorage.setItem(`habit_${habitName}_${today}`, completed.toString());
             } else {
                 throw error;

@@ -330,7 +330,7 @@ export default function ProgressPage() {
                        </div>
                        
                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
-                         {test.biomarkers?.filter((bm: any) => bm.status.toLowerCase() !== 'normal').map((bm: any, idx: number) => {
+                         {test.biomarkers?.filter((bm: any) => bm.status.toLowerCase() !== 'normal' && bm.status.toUpperCase() !== 'META').map((bm: any, idx: number) => {
                             let diffNote = '';
                             let isImproved = false;
                             if (testIdx < bloodTests.length - 1) {

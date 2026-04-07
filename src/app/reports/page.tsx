@@ -78,7 +78,19 @@ export default function ReportsPage() {
   const saveToDashboard = async () => {
     if (!analysisResult) return;
     setLoading(true);
-    const success = await BloodTestStorage.save(analysisResult.biomarkers, analysisResult.summary, analysisResult.report_date);
+    
+    // Inject the intelligent AI supplements into the biomarkers array as META data 
+    // so we can reliably fetch them later without a schema migration.
+    const biomarkersWithMeta = [...analysisResult.biomarkers];
+    if (analysisResult.supplements_required && analysisResult.supplements_required.length > 0) {
+      biomarkersWithMeta.push({
+        marker: '__SUPPLEMENTS__',
+        status: 'META',
+        value: analysisResult.supplements_required.join(',')
+      });
+    }
+
+    const success = await BloodTestStorage.save(biomarkersWithMeta, analysisResult.summary, analysisResult.report_date);
     if (success) {
       router.push('/progress'); // Redirect back to Dashboard
     } else {
