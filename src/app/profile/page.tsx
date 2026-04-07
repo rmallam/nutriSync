@@ -43,15 +43,19 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
       if (session) {
         const data = await MealStorage.getUserProfile();
-        if (data) {
-          setProfile({
-            display_name: data.display_name || '',
-            height_cm: data.height_cm || null,
-            target_weight_kg: data.target_weight_kg || null,
-            activity_level: data.activity_level || 'Light',
-            diet_goal: data.diet_goal || 'Maintain',
-          });
+        
+        let nameField = data?.display_name || '';
+        if (!nameField && session.user?.user_metadata?.full_name) {
+           nameField = session.user.user_metadata.full_name;
         }
+
+        setProfile({
+            display_name: nameField,
+            height_cm: data?.height_cm || null,
+            target_weight_kg: data?.target_weight_kg || null,
+            activity_level: data?.activity_level || 'Light',
+            diet_goal: data?.diet_goal || 'Maintain',
+        });
         
         const logs = await MealStorage.getWeightLogs();
         if (logs.length > 0) {

@@ -33,7 +33,7 @@ RECENT MEALS (LAST 5):
 ${JSON.stringify(meals?.map((m: any) => ({ name: m.name, calories: m.total_calories, protein: m.total_protein })) || [])}
 
 INSTRUCTIONS:
-1. Provide a short greeting using their name.
+1. Provide a short greetings ONLY using the exact name listed in USER PROFILE (${profile.display_name || 'User'}). Do NOT greet them using a name extracted from the blood test or medical history.
 2. Acknowledge their specific goal (${profile.diet_goal}) and current progress.
 3. PREDICTIVE BLOOD TREND ANALYSIS: If blood test history is provided, analyze multiple timestamps. If a marker like glucose or cholesterol is rising over time, point out the mathematical trend and warn them, even if it is technically 'normal' right now.
 4. MEAL ANALYSIS: Analyze their specific logged items. Point out nutrient gaps relative to their blood deficiencies.

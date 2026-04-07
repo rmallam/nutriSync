@@ -228,6 +228,9 @@ export default function Home() {
             <h1 style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
               <span style={{ fontSize: '1.5rem' }}>🍏</span> NutriSync
             </h1>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '4px', fontWeight: 500 }}>
+              Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {profile?.display_name || session?.user?.user_metadata?.full_name || 'User'}!
+            </p>
           </div>
           <div style={{ background: 'var(--macro-carbs)', color: '#fff', padding: '4px 10px', borderRadius: 'var(--radius-full)', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
             🔥 {Number(dailyTotals.calories).toFixed(0)} kcal
