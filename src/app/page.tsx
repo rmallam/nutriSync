@@ -40,6 +40,9 @@ export default function Home() {
   // Phase 13 Native Wearables State
   const [nativeHealth, setNativeHealth] = useState({ steps: 0, activeCalories: 0, isSynced: false });
 
+  // Browser-Local Greeting (Hydration Safe)
+  const [greeting, setGreeting] = useState('day');
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -53,6 +56,11 @@ export default function Home() {
     });
 
     return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const hr = new Date().getHours();
+    setGreeting(hr < 12 ? 'morning' : hr < 18 ? 'afternoon' : 'evening');
   }, []);
 
   const loadData = async () => {
@@ -229,7 +237,7 @@ export default function Home() {
               <span style={{ fontSize: '1.5rem' }}>🍏</span> NutriSync
             </h1>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '4px', fontWeight: 500 }}>
-              Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {profile?.display_name || session?.user?.user_metadata?.full_name || 'User'}!
+              Good {greeting}, {profile?.display_name || session?.user?.user_metadata?.full_name || 'User'}!
             </p>
           </div>
           <div style={{ background: 'var(--macro-carbs)', color: '#fff', padding: '4px 10px', borderRadius: 'var(--radius-full)', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
