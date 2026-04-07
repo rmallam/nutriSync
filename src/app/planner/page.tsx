@@ -188,16 +188,25 @@ export default function PlannerPage() {
   };
 
   return (
-    <div className="container" style={{ paddingBottom: '100px', paddingTop: 'env(safe-area-inset-top, 24px)', background: 'var(--bg-tertiary)', minHeight: '100vh' }}>
-      
-      <header style={{ padding: 'var(--space-6) var(--space-6)', marginBottom: 'var(--space-2)' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.04em', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '2.2rem' }}>🗓️</span> Planner
-        </h1>
-        <p style={{ color: 'var(--text-muted)' }}>Your 3-Day Meal Matrix & Smart Cart.</p>
+    <div style={{ background: 'var(--bg-tertiary)', minHeight: '100vh', paddingBottom: '90px' }}>
+      {/* Brand Header */}
+      <header className="glass-panel" style={{ 
+        position: 'sticky', top: 0, zIndex: 40, padding: 'var(--space-4) var(--space-6)',
+        borderBottom: '1px solid var(--border-subtle)', borderRadius: 0, marginBottom: 'var(--space-6)'
+      }}>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+              <span style={{ fontSize: '1.5rem' }}>🍏</span> NutriSync
+            </h1>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '4px', fontWeight: 500 }}>
+              Planner & Smart Cart
+            </p>
+          </div>
+        </div>
       </header>
 
-      <div style={{ padding: '0 var(--space-4)' }}>
+      <div className="container">
         
         {/* Glowing Generate Button Card */}
         <div className="card" style={{ padding: 'var(--space-8)', marginBottom: 'var(--space-8)', background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', border: '1px solid var(--border-subtle)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', borderRadius: '32px' }}>
