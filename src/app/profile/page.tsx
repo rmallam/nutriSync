@@ -107,12 +107,25 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container" style={{ paddingBottom: '90px', paddingTop: 'env(safe-area-inset-top, 24px)', background: 'var(--bg-tertiary)', minHeight: '100vh' }}>
-      <header style={{ padding: 'var(--space-6) var(--space-6)', marginBottom: 'var(--space-2)' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.04em', color: 'var(--text-primary)' }}>
-          Settings
-        </h1>
+    <div style={{ background: 'var(--bg-tertiary)', minHeight: '100vh', paddingBottom: '90px' }}>
+      {/* Brand Header */}
+      <header className="glass-panel" style={{ 
+        position: 'sticky', top: 0, zIndex: 40, padding: 'var(--space-4) var(--space-6)',
+        borderBottom: '1px solid var(--border-subtle)', borderRadius: 0, marginBottom: 'var(--space-6)'
+      }}>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+              <span style={{ fontSize: '1.5rem' }}>🍏</span> NutriSync
+            </h1>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '4px', fontWeight: 500 }}>
+              Profile & Settings
+            </p>
+          </div>
+        </div>
       </header>
+
+      <div className="container">
 
       <div style={{ padding: '0 var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
         
@@ -255,6 +268,7 @@ export default function ProfilePage() {
       </div>
 
       <BottomNav />
+      </div>
     </div>
   );
 }

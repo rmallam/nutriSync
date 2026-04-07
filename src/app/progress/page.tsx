@@ -231,15 +231,28 @@ export default function ProgressPage() {
   ];
 
   return (
-    <div className="container" style={{ paddingBottom: '90px' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-8)' }}>
-        <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '4px' }}>
-            Progress & Insights
-          </h1>
-          <p style={{ color: 'var(--text-muted)' }}>You have a <span style={{fontWeight: 700, color: '#FFFFFF'}}>3 day</span> logging streak! 🔥</p>
+    <div style={{ background: 'var(--bg-tertiary)', minHeight: '100vh', paddingBottom: '90px' }}>
+      {/* Brand Header */}
+      <header className="glass-panel" style={{ 
+        position: 'sticky', top: 0, zIndex: 40, padding: 'var(--space-4) var(--space-6)',
+        borderBottom: '1px solid var(--border-subtle)', borderRadius: 0, marginBottom: 'var(--space-6)'
+      }}>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+              <span style={{ fontSize: '1.5rem' }}>🍏</span> NutriSync
+            </h1>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '4px', fontWeight: 500 }}>
+              Progress & Insights
+            </p>
+          </div>
+          <div style={{ background: 'var(--bg-secondary)', padding: '4px 10px', borderRadius: 'var(--radius-full)', fontSize: '0.75rem', fontWeight: 600, border: '1px solid var(--border-subtle)' }}>
+            🔥 3 Day Streak
+          </div>
         </div>
       </header>
+
+      <div className="container">
 
       {/* AI Health Coach & Wearables Integration */}
       <section style={{ marginBottom: 'var(--space-8)' }}>
@@ -546,6 +559,7 @@ export default function ProgressPage() {
       </section>
 
       <BottomNav />
+      </div>
     </div>
   );
 }

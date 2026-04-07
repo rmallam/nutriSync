@@ -109,23 +109,29 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="container" style={{ paddingBottom: '100px', paddingTop: 'env(safe-area-inset-top, 24px)', background: 'var(--bg-tertiary)', minHeight: '100vh' }}>
-      
-      <header style={{ padding: 'var(--space-6) var(--space-6)', marginBottom: 'var(--space-2)' }}>
-        <button 
-          onClick={() => router.push('/progress')}
-          style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', marginBottom: '16px', padding: 0 }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-          Back to Dashboard
-        </button>
-        <h1 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.04em', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '2.2rem' }}>🩸</span> Lab Reports
-        </h1>
-        <p style={{ color: 'var(--text-muted)' }}>Upload your latest blood panel, PDF, or photos to sync with your AI Meal Planner.</p>
+    <div style={{ background: 'var(--bg-tertiary)', minHeight: '100vh', paddingBottom: '90px' }}>
+      {/* Brand Header */}
+      <header className="glass-panel" style={{ 
+        position: 'sticky', top: 0, zIndex: 40, padding: 'var(--space-4) var(--space-6)',
+        borderBottom: '1px solid var(--border-subtle)', borderRadius: 0, marginBottom: 'var(--space-6)'
+      }}>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+              <span style={{ fontSize: '1.5rem' }}>🍏</span> NutriSync
+            </h1>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '4px', fontWeight: 500 }}>
+              Lab Reports
+            </p>
+          </div>
+          <button className="btn btn-secondary" onClick={() => router.push('/progress')} style={{ padding: '6px 12px', fontSize: '0.8rem', borderRadius: 'var(--radius-full)' }}>
+             Cancel
+          </button>
+        </div>
       </header>
 
-      <div style={{ padding: '0 var(--space-4)' }}>
+      <div className="container" style={{ padding: '0 var(--space-4)' }}>
+        <p style={{ color: 'var(--text-muted)', marginBottom: 'var(--space-6)' }}>Upload your latest blood panel, PDF, or photos to sync with your AI Meal Planner.</p>
         
         {/* Upload Container */}
         {!analysisResult && (
