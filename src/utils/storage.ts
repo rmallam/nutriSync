@@ -574,13 +574,13 @@ export const HabitsStorage = {
 export const DailyMealStorage = {
     getCachedMeal: () => {
         if (typeof window === 'undefined') return null;
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date().toLocaleDateString('en-CA');
         const cachedStr = localStorage.getItem(`daily_meal_${today}`);
         return cachedStr ? JSON.parse(cachedStr) : null;
     },
     setCachedMeal: (mealObj: any) => {
         if (typeof window === 'undefined') return;
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date().toLocaleDateString('en-CA');
         localStorage.setItem(`daily_meal_${today}`, JSON.stringify(mealObj));
     }
 };

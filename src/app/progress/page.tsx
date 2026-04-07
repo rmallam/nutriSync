@@ -67,7 +67,14 @@ export default function ProgressPage() {
         setBloodTests(displayTests);
         
         // Load coaching tip
-        if (!coachMessage) {
+        let cachedCoach = null;
+        if (typeof window !== 'undefined') {
+            cachedCoach = sessionStorage.getItem('coach_insight');
+        }
+        
+        if (cachedCoach) {
+          setCoachMessage(cachedCoach);
+        } else if (!coachMessage) {
           setLoadingCoach(true);
           try {
             const profile = await MealStorage.getUserProfile();
@@ -79,6 +86,7 @@ export default function ProgressPage() {
                   profile, 
                   meals: fetchedMeals, 
                   weightLogs: fetchedWeight,
+                  bloodTests: displayTests, // <--- Fix: Provide blood test history to coach
                   wearables: {
                     sleepHours: mockSleep,
                     stressLevel: mockStress,
@@ -89,6 +97,9 @@ export default function ProgressPage() {
               const data = await res.json();
               if (data.coachResponse) {
                 setCoachMessage(data.coachResponse);
+                if (typeof window !== 'undefined') {
+                    sessionStorage.setItem('coach_insight', data.coachResponse);
+                }
               } else {
                 setCoachMessage("Please fill out your whole profile in the Profile tab for customized coaching!");
               }
@@ -117,6 +128,7 @@ export default function ProgressPage() {
             profile, 
             meals, 
             weightLogs,
+            bloodTests, // <--- Fix: provide it on manual regeneration too
             wearables: {
               sleepHours: mockSleep,
               stressLevel: mockStress,
@@ -125,7 +137,12 @@ export default function ProgressPage() {
           })
         });
         const data = await res.json();
-        if (data.coachResponse) setCoachMessage(data.coachResponse);
+        if (data.coachResponse) {
+            setCoachMessage(data.coachResponse);
+            if (typeof window !== 'undefined') {
+                sessionStorage.setItem('coach_insight', data.coachResponse);
+            }
+        }
       }
     } catch (e) {
       console.error("Coach regeneration failed", e);
