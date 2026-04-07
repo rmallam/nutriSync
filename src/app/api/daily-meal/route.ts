@@ -10,11 +10,13 @@ export async function POST(req: NextRequest) {
     const location = profile?.location || 'Unknown';
     const dietaryRestrictions = profile?.dietary_restrictions || 'None';
     
-    // Process last 3 days of meals
-    const recentMealsString = meals?.slice(0, 10).map((m: any) => m.name).join(", ");
+    // Perform deep analysis on all uploaded meals (historical logs)
+    const recentMealsString = meals?.length > 0 
+      ? meals.slice(0, 15).map((m: any) => `${m.name} (${m.total_calories} kcal, ${m.total_protein}g Protein)`).join(" | ")
+      : 'No prior meals explicitly logged';
     
     const latestTest = (bloodTests && bloodTests.length > 0) ? bloodTests[0] : null;
-    const abnormalMarkers = latestTest?.biomarkers?.filter((b:any) => b.status.toLowerCase() !== 'normal') || [];
+    const abnormalMarkers = latestTest?.biomarkers?.filter((b:any) => b.status.toLowerCase() !== 'normal' && b.status !== 'META') || [];
     const deficiencyString = abnormalMarkers.length > 0 
       ? abnormalMarkers.map((b: any) => `${b.marker} (${b.status})`).join(', ') 
       : 'None known';
@@ -23,16 +25,18 @@ export async function POST(req: NextRequest) {
 The user is requesting their ONE highly optimized "Daily Smart Meal" for today.
 Context:
 - Location: ${location}
-- Restrictions: ${dietaryRestrictions}
-- Goal: ${dietGoal}
+- Restrictions/Preferences: ${dietaryRestrictions}
+- Primary Goal: ${dietGoal}
+- Target Weight Focus: ${profile?.target_weight_kg ? profile.target_weight_kg + 'kg' : 'General Maintenance'}
 - Known Blood Test Deficiencies: ${deficiencyString}
-- Recent Foods Eaten: ${recentMealsString || 'Standard balanced diet'}
+- Full Historical Meal Log: ${recentMealsString}
 
 CRITICAL DIRECTIVES:
-1. Create exactly ONE meal concept.
-2. It MUST heavily supplement the known blood test deficiencies without violating dietary restrictions.
-3. Provide a localized, delicious recipe title.
-4. Return STRICT JSON.`;
+1. Analyze their historical "Full Historical Meal Log" to understand their real eating patterns. Suggest a NEW meal that firmly complements this style, avoiding boring repetitiveness but staying realistic.
+2. It MUST act as a hyper-targeted nutritional supplement for any known blood test deficiencies.
+3. The macros MUST align tightly with their ${dietGoal} goal.
+4. Provide a localized, delicious recipe title.
+5. Return STRICT JSON matching the schema precisely.`;
 
     const responseSchema: Schema = {
       type: Type.OBJECT,

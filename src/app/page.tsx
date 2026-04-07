@@ -116,7 +116,7 @@ export default function Home() {
 
          let cachedMeal = DailyMealStorage.getCachedMeal();
          if (!cachedMeal && p) {
-             const dm = await fetch('/api/daily-meal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ meals: dayMeals, profile: p, bloodTests }) }).then(r=>r.json());
+             const dm = await fetch('/api/daily-meal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ meals: allMeals, profile: p, bloodTests }) }).then(r=>r.json());
              if (dm.success) {
                  cachedMeal = dm.data;
                  DailyMealStorage.setCachedMeal(cachedMeal);
