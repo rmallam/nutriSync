@@ -82,11 +82,20 @@ export default function ReportsPage() {
     // Inject the intelligent AI supplements into the biomarkers array as META data 
     // so we can reliably fetch them later without a schema migration.
     const biomarkersWithMeta = [...analysisResult.biomarkers];
-    if (analysisResult.supplements_required && analysisResult.supplements_required.length > 0) {
+    
+    // Safely coerce to array (LLMs sometimes hallucinate strings despite JSON Schema)
+    let suppArray: string[] = [];
+    if (Array.isArray(analysisResult.supplements_required)) {
+      suppArray = analysisResult.supplements_required;
+    } else if (typeof analysisResult.supplements_required === 'string') {
+      suppArray = analysisResult.supplements_required.split(',').map((s: string) => s.trim());
+    }
+
+    if (suppArray && suppArray.length > 0) {
       biomarkersWithMeta.push({
         marker: '__SUPPLEMENTS__',
         status: 'META',
-        value: analysisResult.supplements_required.join(',')
+        value: suppArray.join(',')
       });
     }
 

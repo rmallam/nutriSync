@@ -55,7 +55,7 @@ Respond STRICTLY with JSON adhering to the provided schema.`;
         },
         supplements_required: {
           type: Type.ARRAY,
-          description: "List of highly recommended daily supplements based on identified severe deficiencies (e.g., Vitamin D3, Iron, B12). Leave empty if none are necessary.",
+          description: "List of recommended daily supplements perfectly tailored to act on ANY out-of-range biomarkers found (e.g., Vitamin D3 for Low Vitamin D, Omega 3 for High Cholesterol). If ANY marker is abnormal, you MUST thoughtfully suggest at least one supplement.",
           items: { type: Type.STRING }
         },
         report_date: {
